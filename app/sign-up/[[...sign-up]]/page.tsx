@@ -2,7 +2,7 @@ import { SignUp } from "@clerk/nextjs/app-beta";
 
 export default function Page() {
     return (
-        <main className="h-[100dvh] w-[100dvw] flex justify-center items-center bg-slate-600">
+        <main className="h-full flex justify-center items-center bg-slate-100">
             <SignUp />
         </main>);
 }

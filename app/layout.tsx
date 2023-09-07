@@ -15,7 +15,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="bg-slate-600 h-[100dvh] w-[100dvw]">
+      <body className="bg-slate-100 h-[100dvh] w-[100dvw]">
         <ClerkProvider publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY} >
           <ConvexClerkProvider>
             {children}
