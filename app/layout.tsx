@@ -1,10 +1,7 @@
 import './globals.css'
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
 import ConvexClerkProvider from './components/client/ConvexClerkProvider';
 import { ClerkProvider } from '@clerk/nextjs/app-beta';
-
-const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -17,14 +14,14 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <ClerkProvider publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY} >
-      <ConvexClerkProvider>
-        <html lang="en">
-          <body className={inter.className}>
+    <html lang="en">
+      <body className="bg-slate-600 h-[100dvh] w-[100dvw]">
+        <ClerkProvider publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY} >
+          <ConvexClerkProvider>
             {children}
-          </body>
-        </html>
-      </ConvexClerkProvider>
-    </ClerkProvider>
+          </ConvexClerkProvider>
+        </ClerkProvider>
+      </body>
+    </html>
   )
 }
