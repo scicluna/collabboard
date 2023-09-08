@@ -1,5 +1,5 @@
 'use client'
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faPlus, faX } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
 import { BoardSelectorProps } from "./BoardSelector";
@@ -19,18 +19,20 @@ export default function CreateNewBoard({ userid }: BoardSelectorProps) {
     }
 
     return (
-        <>
-            <button className="fixed" onClick={() => setModal(prev => !prev)}>
-                <FontAwesomeIcon icon={faPlus} width={30} height={30} color="gray" className="hover:text-black" />
+        <div className="relative w-full mb-5 flex sm:flex-row flex-col items-center gap-5 h-[30px]">
+            <button className="flex items-center hover:text-gray-400 h-[28px]  rounded-full focus:outline focus:outline-[3px] focus:outline-indigo-300 transition-all duration-15 outline-none" onClick={() => setModal(prev => !prev)}>
+                <FontAwesomeIcon icon={faPlus} color="gray" className="text-3xl rounded-full" />
             </button>
             {modal &&
-                <form className="fixed flex shadow-gray-300 shadow-md items-center p-2 bg-white left-20 gap-4 outline outline-1 outline-gray-200 z-20"
+                <form className="h-fit flex gap-3 text-sm sm:text-base items-center bg-gray-100 shadow-sm shadow-slate-500 p-1"
                     onSubmit={buildNewBoard}>
-                    <label htmlFor="boardname">Board Name:</label>
-                    <input value={name} onChange={e => setName(e.target.value)} type="text" name="boardname" className="outline outline-gray-200 outline-1 bg-gray-50 p-2" />
+                    <label htmlFor="boardname" className="">Board Name:</label>
+                    <input value={name} onChange={e => setName(e.target.value)} type="text" name="boardname" />
                     <button type="submit" className="text-blue-400 hover:text-blue-300">Create</button>
-                    <button type="button" className="text-blue-400 hover:text-blue-300" onClick={() => setModal(prev => !prev)}>X</button>
+                    <button type="button" className="text-blue-400 hover:text-blue-300" onClick={() => setModal(prev => !prev)}>
+                        <FontAwesomeIcon icon={faX} />
+                    </button>
                 </form>}
-        </>
+        </div>
     )
 }

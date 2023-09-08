@@ -32,9 +32,9 @@ export type Note = {
 export default function BoardSelector({ userid }: BoardSelectorProps) {
     const boards = useQuery(api.boards.getBoards, { userId: userid! })
     return (
-        <section className="h-[90dvh] pt-[10dvh] w-1/4 p-4 relative shadow-sm shadow-gray-300 overflow-auto">
+        <section className="h-[90dvh] sm:w-1/4 w-full p-4 relative shadow-sm shadow-gray-300 overflow-auto">
             <CreateNewBoard userid={userid} />
-            <div className="flex flex-col gap-4 mt-10">
+            <div className="flex flex-col gap-4">
                 {boards ? boards.map(board => (
                     <div className="relative" key={board._id}>
                         <a href={`/user/${userid}/board/${board._id}`}>

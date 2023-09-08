@@ -3,7 +3,8 @@ import { MouseEvent } from "react";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
-import { User } from "@clerk/nextjs/server";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrash } from "@fortawesome/free-solid-svg-icons";
 
 type TrashBoardProps = {
     userid: string
@@ -19,6 +20,8 @@ export default function TrashBoard({ userid, boardid }: TrashBoardProps) {
     }
 
     return (
-        <button onClick={initDeleteBoard} className="absolute bottom-0 right-0">Trash</button>
+        <button onClick={initDeleteBoard} className="absolute bottom-0 right-0">
+            <FontAwesomeIcon icon={faTrash} className="px-1" />
+        </button>
     )
 }
