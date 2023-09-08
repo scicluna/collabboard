@@ -1,6 +1,6 @@
 import { currentUser } from "@clerk/nextjs";
-import BoardSelector from "../components/client/BoardSelector";
-import DashNav from "../components/client/DashNav";
+import BoardSelector from "@/components/client/BoardSelector";
+import DashNav from "@/components/client/DashNav";
 
 export default async function Dashboard() {
     const user = await currentUser();

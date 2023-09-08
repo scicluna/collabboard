@@ -19,7 +19,7 @@ export default function CreateNewBoard({ userid }: BoardSelectorProps) {
     }
 
     return (
-        <div className="relative w-full mb-5 flex sm:flex-row flex-col items-center gap-5 h-[30px]">
+        <div className="relative w-full mb-5 flex sm:flex-row flex-col items-center gap-5 sm:h-[30px]">
             <button className="flex items-center hover:text-gray-400 h-[28px]  rounded-full focus:outline focus:outline-[3px] focus:outline-indigo-300 transition-all duration-15 outline-none" onClick={() => setModal(prev => !prev)}>
                 <FontAwesomeIcon icon={faPlus} color="gray" className="text-3xl rounded-full" />
             </button>
