@@ -9,8 +9,8 @@ export default defineSchema({
     notes: defineTable({
         userId: v.string(),
         boardId: v.string(),
-        top: v.number(),
-        left: v.number(),
+        x: v.number(),
+        y: v.number(),
         width: v.number(),
         height: v.number(),
         fontSize: v.number(),

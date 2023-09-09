@@ -6,9 +6,11 @@ import { api } from "@/convex/_generated/api";
 
 type useNotesProps = {
     noteToolActive: boolean
+    userid: string
+    boardid: string
 }
 
-function useNoteTool({ noteToolActive }: useNotesProps) {
+function useNoteTool({ noteToolActive, userid, boardid }: useNotesProps) {
     const [startPos, setStartPos] = useState<{ x: number, y: number } | null>(null);
     const [currentBox, setCurrentBox] = useState<{ x: number, y: number, width: number, height: number } | null>(null);
     const createNewNote = useMutation(api.notes.createNewNote);
@@ -32,15 +34,31 @@ function useNoteTool({ noteToolActive }: useNotesProps) {
         });
     }
 
-    function handleNoteMouseUp() {
+    async function handleNoteMouseUp() {
         if (!noteToolActive || !currentBox) return;
 
         // Send the currentBox data to the database.
-        // After saving to the DB, add the note box to your state, so it renders on the screen.
+        await createNewNote({
+            userId: userid,
+            boardId: boardid,
+            x: 0,
+            y: 0,
+            width: currentBox.width,
+            height: currentBox.height,
+            fontSize: 20,
+            zIndex: 1,
+            text: "New Note"
+        })
 
-        // Reset temporary state.
         setStartPos(null);
         setCurrentBox(null);
     }
+
+    return {
+        handleNoteMouseDown,
+        handleNoteMouseMove,
+        handleNoteMouseUp,
+    }
 }
 
+export default useNoteTool

@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef } from "react"
 import BoardToolBar from "@/components/client/BoardToolBar"
 import useDragAndZoom from "@/hooks/useDragAndZoom"
+import useNoteTool from "@/hooks/useNoteTool"
 
 type BoardProps = {
     boardid: string
@@ -13,6 +14,7 @@ export default function Board({ boardid, userid }: BoardProps) {
     const [dragToolActive, setDragToolActive] = useState(false)
     const [noteToolActive, setNoteToolActive] = useState(true)  //will eventually default to false
     const { zoom, handleZoom, dragMouseDown, dragMouseMove, dragMouseUp, cursorLogic, arrowDragKeyDown } = useDragAndZoom({ initialZoom: 1, dragToolActive })
+    const { handleNoteMouseDown, handleNoteMouseMove, handleNoteMouseUp } = useNoteTool({ noteToolActive, userid, boardid })
     const canvasRef = useRef(null);
 
     //const notes = useQuery("getNotes", {boardid})
@@ -40,9 +42,9 @@ export default function Board({ boardid, userid }: BoardProps) {
         }
         if (noteToolActive) {
             return {
-                mouseDown: () => { },
-                mouseMove: () => { },
-                mouseUp: () => { }
+                mouseDown: handleNoteMouseDown,
+                mouseMove: handleNoteMouseMove,
+                mouseUp: handleNoteMouseUp
             }
         }
 
