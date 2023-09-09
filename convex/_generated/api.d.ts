@@ -16,6 +16,7 @@ import type {
 } from "convex/server";
 import type * as auth_config from "../auth/config";
 import type * as boards from "../boards";
+import type * as notes from "../notes";
 
 /**
  * A utility for referencing Convex functions in your app's API.
@@ -28,6 +29,7 @@ import type * as boards from "../boards";
 declare const fullApi: ApiFromModules<{
   "auth/config": typeof auth_config;
   boards: typeof boards;
+  notes: typeof notes;
 }>;
 export declare const api: FilterApi<
   typeof fullApi,

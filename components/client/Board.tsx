@@ -10,7 +10,8 @@ type BoardProps = {
 
 export default function Board({ boardid, userid }: BoardProps) {
     const [active, setActive] = useState(false)
-    const [dragToolActive, setDragToolActive] = useState(true) //will eventually default to false
+    const [dragToolActive, setDragToolActive] = useState(false)
+    const [noteToolActive, setNoteToolActive] = useState(true)  //will eventually default to false
     const { zoom, handleZoom, dragMouseDown, dragMouseMove, dragMouseUp, cursorLogic, arrowDragKeyDown } = useDragAndZoom({ initialZoom: 1, dragToolActive })
     const canvasRef = useRef(null);
 
@@ -29,15 +30,48 @@ export default function Board({ boardid, userid }: BoardProps) {
         }
     }, [])
 
+    const activeTool = () => {
+        if (dragToolActive) {
+            return {
+                mouseDown: dragMouseDown,
+                mouseMove: dragMouseMove,
+                mouseUp: dragMouseUp,
+            }
+        }
+        if (noteToolActive) {
+            return {
+                mouseDown: () => { },
+                mouseMove: () => { },
+                mouseUp: () => { }
+            }
+        }
+
+        return {
+            mouseDown: () => { },
+            mouseMove: () => { },
+            mouseUp: () => { }
+        }
+    }
+    const Tool = activeTool()
+
     return (
         <main className="absolute w-[3500px] h-[3250px]
          bg-black flex items-center justify-center"
             style={{ visibility: active ? 'visible' : 'hidden', fontFamily: 'fantasy' }} >
-            <BoardToolBar dragToolActive={dragToolActive} setDragToolActive={setDragToolActive} />
+            <BoardToolBar
+                dragToolActive={dragToolActive}
+                setDragToolActive={setDragToolActive}
+                noteToolActive={noteToolActive}
+                setNoteToolActive={setNoteToolActive}
+            />
             {/* <Toolbar createNewNote={createNewNote}  createNewPin={createNewPin} createNewLine={createNewLine}/> */}
-            <section ref={canvasRef} tabIndex={0} className={`w-[50px] h-[50px] bg-gray-100 overflow-hidden outline-none`}
-                onMouseDown={dragMouseDown} onMouseMove={dragMouseMove} onMouseUp={dragMouseUp} onMouseLeave={dragMouseUp}
-                onWheel={handleZoom} onKeyDown={arrowDragKeyDown} style={{ transform: `scale(${zoom})`, cursor: cursorLogic }}>
+            <section ref={canvasRef} tabIndex={0} className={`w-[2500px] h-[2250px] bg-gray-100 overflow-hidden outline-none`}
+                onMouseDown={Tool.mouseDown}
+                onMouseMove={Tool.mouseMove}
+                onMouseUp={Tool.mouseUp}
+                onMouseLeave={Tool.mouseUp}
+                onWheel={handleZoom}
+                onKeyDown={arrowDragKeyDown} style={{ transform: `scale(${zoom})`, cursor: cursorLogic }}>
                 {/* populate notes and connections and lines and images */}
             </section>
         </main>

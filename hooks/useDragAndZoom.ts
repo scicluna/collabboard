@@ -60,16 +60,32 @@ function useDragAndZoom({ initialZoom = 1, dragToolActive = true }: UseDragAndZo
     function arrowDragKeyDown(e: React.KeyboardEvent) {
         switch (e.key) {
             case "ArrowUp":
-                window.scrollBy(0, ARROW_KEY_DRAG_SPEED);
+                window.scrollBy({
+                    top: -ARROW_KEY_DRAG_SPEED,
+                    left: 0,
+                    behavior: "smooth"
+                });
                 break;
             case "ArrowDown":
-                window.scrollBy(0, -ARROW_KEY_DRAG_SPEED);
+                window.scrollBy({
+                    top: ARROW_KEY_DRAG_SPEED,
+                    left: 0,
+                    behavior: "smooth"
+                });
                 break;
             case "ArrowLeft":
-                window.scrollBy(ARROW_KEY_DRAG_SPEED, 0);
+                window.scrollBy({
+                    top: 0,
+                    left: -ARROW_KEY_DRAG_SPEED,
+                    behavior: "smooth"
+                });
                 break;
             case "ArrowRight":
-                window.scrollBy(-ARROW_KEY_DRAG_SPEED, 0);
+                window.scrollBy({
+                    top: 0,
+                    left: ARROW_KEY_DRAG_SPEED,
+                    behavior: "smooth"
+                });
                 break;
             default:
                 return;
