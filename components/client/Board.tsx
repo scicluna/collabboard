@@ -1,5 +1,5 @@
 "use client"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import BoardToolBar from "@/components/client/BoardToolBar"
 import useDragAndZoom from "@/hooks/useDragAndZoom"
 
@@ -11,7 +11,8 @@ type BoardProps = {
 export default function Board({ boardid, userid }: BoardProps) {
     const [active, setActive] = useState(false)
     const [dragToolActive, setDragToolActive] = useState(true) //will eventually default to false
-    const { zoom, handleZoom, dragMouseDown, dragMouseMove, dragMouseUp, cursorLogic } = useDragAndZoom({ initialZoom: 1, dragToolActive })
+    const { zoom, handleZoom, dragMouseDown, dragMouseMove, dragMouseUp, cursorLogic, arrowDragKeyDown } = useDragAndZoom({ initialZoom: 1, dragToolActive })
+    const canvasRef = useRef(null);
 
     //const notes = useQuery("getNotes", {boardid})
     //const createNewNote = useMutation("createNewNote")
@@ -34,9 +35,9 @@ export default function Board({ boardid, userid }: BoardProps) {
             style={{ visibility: active ? 'visible' : 'hidden', fontFamily: 'fantasy' }} >
             <BoardToolBar dragToolActive={dragToolActive} setDragToolActive={setDragToolActive} />
             {/* <Toolbar createNewNote={createNewNote}  createNewPin={createNewPin} createNewLine={createNewLine}/> */}
-            <section className={`w-[50px] h-[50px] bg-gray-100 overflow-hidden`}
+            <section ref={canvasRef} tabIndex={0} className={`w-[50px] h-[50px] bg-gray-100 overflow-hidden outline-none`}
                 onMouseDown={dragMouseDown} onMouseMove={dragMouseMove} onMouseUp={dragMouseUp} onMouseLeave={dragMouseUp}
-                onWheel={handleZoom} style={{ transform: `scale(${zoom})`, cursor: cursorLogic }}>
+                onWheel={handleZoom} onKeyDown={arrowDragKeyDown} style={{ transform: `scale(${zoom})`, cursor: cursorLogic }}>
                 {/* populate notes and connections and lines and images */}
             </section>
         </main>

@@ -7,10 +7,7 @@ type UseDragAndZoomProps = {
     dragToolActive?: boolean;
 };
 
-function useDragAndZoom({
-    initialZoom = 1,
-    dragToolActive = true // eventually will start as false
-}: UseDragAndZoomProps) {
+function useDragAndZoom({ initialZoom = 1, dragToolActive = true }: UseDragAndZoomProps) {
     const [zoom, setZoom] = useState(initialZoom);
     const [dragging, setDragging] = useState(false);
     const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
@@ -57,13 +54,36 @@ function useDragAndZoom({
 
     const cursorLogic = dragging ? 'grabbing' : dragToolActive ? 'grab' : 'default';
 
+    //////////////////////////////////ARROW KEY LOGIC
+    const ARROW_KEY_DRAG_SPEED = 20
+
+    function arrowDragKeyDown(e: React.KeyboardEvent) {
+        switch (e.key) {
+            case "ArrowUp":
+                window.scrollBy(0, ARROW_KEY_DRAG_SPEED);
+                break;
+            case "ArrowDown":
+                window.scrollBy(0, -ARROW_KEY_DRAG_SPEED);
+                break;
+            case "ArrowLeft":
+                window.scrollBy(ARROW_KEY_DRAG_SPEED, 0);
+                break;
+            case "ArrowRight":
+                window.scrollBy(-ARROW_KEY_DRAG_SPEED, 0);
+                break;
+            default:
+                return;
+        }
+    }
+
     return {
         zoom,
         handleZoom,
         dragMouseDown,
         dragMouseMove,
         dragMouseUp,
-        cursorLogic
+        cursorLogic,
+        arrowDragKeyDown
     };
 }
 
