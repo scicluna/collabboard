@@ -23,13 +23,13 @@ export default function BoardToolBar({ dragToolActive, setDragToolActive, noteTo
             <button onClick={() => {
                 disableAllTools()
                 setDragToolActive(prev => true)
-            }}>
+            }} className={`${dragToolActive ? `outline-[3px] outline outline-indigo-300` : `outline-none`} rounded-full  transition-all duration-15 items-center flex`} >
                 <FontAwesomeIcon icon={faHand} />
             </button>
             <button onClick={() => {
                 disableAllTools()
                 setNoteToolActive(prev => true)
-            }}>
+            }} className={`${noteToolActive ? `outline-[3px] outline outline-indigo-300` : `outline-none`} rounded-full  transition-all duration-15 items-center flex`} >
                 <FontAwesomeIcon icon={faNoteSticky} />
             </button>
         </section>
