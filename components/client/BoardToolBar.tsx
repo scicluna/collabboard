@@ -19,7 +19,7 @@ export default function BoardToolBar({ dragToolActive, setDragToolActive, noteTo
 
 
     return (
-        <section className="fixed z-20 top-0 left-0 w-1/2 translate-x-1/2 flex gap-6 justify-center items-center bg-white bg-opacity-80 h-16 text-black">
+        <section className="fixed z-[10000000000000] top-0 left-0 w-1/2 translate-x-1/2 flex gap-6 justify-center items-center bg-white bg-opacity-80 h-16 text-black">
             <button onClick={() => {
                 disableAllTools()
                 setDragToolActive(prev => true)

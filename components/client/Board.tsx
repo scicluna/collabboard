@@ -1,24 +1,28 @@
 "use client"
 import { useState, useEffect, useRef } from "react"
-import BoardToolBar from "@/components/client/BoardToolBar"
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
 import useDragAndZoom from "@/hooks/useDragAndZoom"
 import useNoteTool from "@/hooks/useNoteTool"
+import BoardToolBar from "@/components/client/BoardToolBar"
+import NoteCard from "@/components/client/NoteCard"
+import NotePreview from "@/components/client/NotePreview";
 
 type BoardProps = {
-    boardid: string
-    userid: string
+    userId: string
+    boardId: string
 }
 
-export default function Board({ boardid, userid }: BoardProps) {
+export default function Board({ userId, boardId }: BoardProps) {
     const [active, setActive] = useState(false)
     const [dragToolActive, setDragToolActive] = useState(false)
     const [noteToolActive, setNoteToolActive] = useState(true)  //will eventually default to false
     const { zoom, handleZoom, dragMouseDown, dragMouseMove, dragMouseUp, cursorLogic, arrowDragKeyDown } = useDragAndZoom({ initialZoom: 1, dragToolActive })
-    const { handleNoteMouseDown, handleNoteMouseMove, handleNoteMouseUp } = useNoteTool({ noteToolActive, userid, boardid })
+    const { handleNoteMouseDown, handleNoteMouseMove, handleNoteMouseUp, currentBox } = useNoteTool({ noteToolActive, userId, boardId, zoom })
     const canvasRef = useRef(null);
 
-    //const notes = useQuery("getNotes", {boardid})
-    //const createNewNote = useMutation("createNewNote")
+    const notes = useQuery(api.notes.getNotes, { boardId: boardId })
+
     //const createNewPin = useMutation("createNewPin")
     //const createNewLine = useMutation("createNewLine")
 
@@ -57,7 +61,7 @@ export default function Board({ boardid, userid }: BoardProps) {
     const Tool = activeTool()
 
     return (
-        <main className="absolute w-[3500px] h-[3250px]
+        <main className="absolute  w-[3500px] h-[3250px]
          bg-black flex items-center justify-center"
             style={{ visibility: active ? 'visible' : 'hidden', fontFamily: 'fantasy' }} >
             <BoardToolBar
@@ -67,7 +71,7 @@ export default function Board({ boardid, userid }: BoardProps) {
                 setNoteToolActive={setNoteToolActive}
             />
             {/* <Toolbar createNewNote={createNewNote}  createNewPin={createNewPin} createNewLine={createNewLine}/> */}
-            <section ref={canvasRef} tabIndex={0} className={`w-[2500px] h-[2250px] bg-gray-100 overflow-hidden outline-none`}
+            <section ref={canvasRef} tabIndex={0} className={`w-[2500px] h-[2250px] bg-gray-100 overflow-hidden outline-none relative z-20`}
                 onMouseDown={Tool.mouseDown}
                 onMouseMove={Tool.mouseMove}
                 onMouseUp={Tool.mouseUp}
@@ -75,6 +79,12 @@ export default function Board({ boardid, userid }: BoardProps) {
                 onWheel={handleZoom}
                 onKeyDown={arrowDragKeyDown} style={{ transform: `scale(${zoom})`, cursor: cursorLogic }}>
                 {/* populate notes and connections and lines and images */}
+                {notes && notes.map(note => (
+                    <NoteCard
+                        note={note} noteToolActive={noteToolActive}
+                    />
+                ))}
+                <NotePreview currentBox={currentBox} />
             </section>
         </main>
     )

@@ -2,6 +2,17 @@ import { query } from "./_generated/server";
 import { mutation } from "./_generated/server"
 import { v } from "convex/values"
 
+export const getNotes = query({
+    args: {
+        boardId: v.string()
+    },
+    handler: (ctx, args) => {
+        const notes = ctx.db.query("notes").filter(q => q.eq(q.field("boardId"), args.boardId)).collect()
+        return notes
+    }
+})
+
+
 export const createNewNote = mutation({
     args: {
         userId: v.string(),

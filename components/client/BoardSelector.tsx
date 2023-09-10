@@ -8,27 +8,6 @@ export type BoardSelectorProps = {
     userid: string
 }
 
-export type Board = {
-    _id: string
-    ownerid: string
-    name: string
-}
-
-export type Note = {
-    id?: string
-    tempid: string
-    boardid: string
-    text: string
-    image?: string
-    width: string
-    height: string
-    top: string
-    left: string
-    fontSize: string
-    zIndex: number
-    connectedNotes?: string[]
-}
-
 export default function BoardSelector({ userid }: BoardSelectorProps) {
     const boards = useQuery(api.boards.getBoards, { userId: userid! })
     return (
