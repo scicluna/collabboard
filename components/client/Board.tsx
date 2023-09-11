@@ -7,6 +7,7 @@ import useNoteTool from "@/hooks/useNoteTool"
 import BoardToolBar from "@/components/client/BoardToolBar"
 import NoteCard from "@/components/client/NoteCard"
 import NotePreview from "@/components/client/NotePreview";
+import useNoteUpdating from "@/hooks/useNoteUpdating";
 
 type BoardProps = {
     userId: string
@@ -19,6 +20,7 @@ export default function Board({ userId, boardId }: BoardProps) {
     const [noteToolActive, setNoteToolActive] = useState(true)  //will eventually default to false
     const { zoom, handleZoom, dragMouseDown, dragMouseMove, dragMouseUp, cursorLogic, arrowDragKeyDown } = useDragAndZoom({ initialZoom: 1, dragToolActive })
     const { handleNoteMouseDown, handleNoteMouseMove, handleNoteMouseUp, currentBox } = useNoteTool({ noteToolActive, userId, boardId, zoom })
+    const { noteKeyDown, updateNoteText, handleNoteDragStart, handleNoteDrag, handleNoteDragEnd, currentPosition } = useNoteUpdating({ zoom })
     const canvasRef = useRef(null);
 
     const notes = useQuery(api.notes.getNotes, { boardId: boardId })
@@ -81,10 +83,16 @@ export default function Board({ userId, boardId }: BoardProps) {
                 {/* populate notes and connections and lines and images */}
                 {notes && notes.map(note => (
                     <NoteCard
-                        note={note} noteToolActive={noteToolActive}
+                        note={note}
+                        noteKeyDown={noteKeyDown}
+                        updateNoteText={updateNoteText}
+                        handleNoteDragStart={handleNoteDragStart}
+                        handleNoteDrag={handleNoteDrag}
+                        handleNoteDragEnd={handleNoteDragEnd}
+                        currentPosition={currentPosition}
                     />
                 ))}
-                <NotePreview currentBox={currentBox} />
+                <NotePreview currentBox={currentBox} currentPosition={currentPosition} />
             </section>
         </main>
     )

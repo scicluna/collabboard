@@ -1,3 +1,6 @@
+import { Doc } from "@/convex/_generated/dataModel";
+import useNoteUpdating from "@/hooks/useNoteUpdating";
+
 type NotePreviewProps = {
     currentBox: {
         x: number;
@@ -5,14 +8,29 @@ type NotePreviewProps = {
         width: number;
         height: number;
     } | null;
+    currentPosition: {
+        noteId: string;
+        x: number;
+        y: number;
+        width: number;
+        height: number;
+    } | null;
 };
 
-export default function NotePreview({ currentBox }: NotePreviewProps) {
-    if (!currentBox) return <></>
+export default function NotePreview({ currentPosition, currentBox }: NotePreviewProps) {
+    let mode = currentBox ?? currentPosition
+    if (!mode) {
+        return <></>
+    }
 
     return (
-        <div style={{ width: `${currentBox.width}px`, height: `${currentBox.height}px`, top: `${currentBox.y}px`, left: `${currentBox.x}px` }} className="note absolute rounded-lg" >
-            <textarea className={`note h-full w-full  p-2  outline outline-black  focus:outline-red-600 focus:outline-4 rounded-lg`} />
+        <div style={{
+            width: `${mode.width}px`,
+            height: `${mode.height}px`,
+            top: `${mode.y}px`,
+            left: `${mode.x}px`,
+        }} className="note absolute rounded-lg" >
+            <textarea className={`note h-full w-full  p-2  outline  outline-red-600 focus:outline-4 rounded-lg bg-slate-700 bg-opacity-70 `} />
         </div>
     )
 }
