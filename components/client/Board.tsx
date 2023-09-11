@@ -83,6 +83,7 @@ export default function Board({ userId, boardId }: BoardProps) {
                 {/* populate notes and connections and lines and images */}
                 {notes && notes.map(note => (
                     <NoteCard
+                        key={note._id}
                         note={note}
                         noteKeyDown={noteKeyDown}
                         updateNoteText={updateNoteText}

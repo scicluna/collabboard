@@ -36,7 +36,7 @@ export const updateNote = mutation({
         text: v.string(),
     },
     handler: async (ctx, args) => {
-        const updatedNote = await ctx.db.replace(args.noteId,
+        const updatedNote = await ctx.db.patch(args.noteId,
             {
                 userId: args.userId,
                 boardId: args.boardId,

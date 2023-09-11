@@ -9,8 +9,8 @@ export function useDebounce(callback: Function, delay: number) {
             clearTimeout(timeoutRef.current);
         }
 
-        timeoutRef.current = setTimeout(() => {
-            callback(...args);
+        timeoutRef.current = setTimeout(async () => {
+            await callback(...args);
         }, delay);
     };
 }

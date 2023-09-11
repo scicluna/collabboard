@@ -1,7 +1,7 @@
 "use client"
 import { Doc } from "@/convex/_generated/dataModel"
 import { useDebounce } from "@/utils/debounce"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 type NoteCardProps = {
     note: Doc<"notes">
@@ -22,7 +22,11 @@ type NoteCardProps = {
 export default function NoteCard({ note, handleNoteDragStart, handleNoteDrag, handleNoteDragEnd, updateNoteText, noteKeyDown, currentPosition }: NoteCardProps) {
     const [textContent, setTextContent] = useState(note.text)
 
-    const debouncedUpdateNoteText = useDebounce(updateNoteText, 150)
+    useEffect(() => {
+        setTextContent(note.text)
+    }, [note])
+
+    const debouncedUpdateNoteText = useDebounce(updateNoteText, 500)
 
     const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         setTextContent(e.target.value);
@@ -31,8 +35,8 @@ export default function NoteCard({ note, handleNoteDragStart, handleNoteDrag, ha
 
     return (
         <div key={note._id}
-            style={{ width: `${note.width}px`, height: `${note.height}px`, top: `${note.y}px`, left: `${note.x}px`, zIndex: `${note.zIndex}px` }}
-            className="note absolute rounded-lg cursor-pointer"
+            style={{ width: `${note.width}px`, height: `${note.height}px`, top: `${note.y}px`, left: `${note.x}px`, zIndex: `${note.zIndex}px`, display: currentPosition?.noteId === note._id ? 'none' : 'block' }}
+            className={`note absolute rounded-lg cursor-pointer  ${currentPosition ? "" : 'transition-all duration-150'}`}
             draggable="true"
             onDragStart={e => handleNoteDragStart(e)}
             onDrag={e => handleNoteDrag(e, note)}
@@ -42,8 +46,7 @@ export default function NoteCard({ note, handleNoteDragStart, handleNoteDrag, ha
                 onChange={handleTextChange}
                 onKeyDown={(e) => noteKeyDown(e, note)}
                 className={`note h-full w-full  p-2  outline outline-black  focus:outline-indigo-400 focus:outline-4 rounded-lg`}
-                style={{ fontSize: note.fontSize || '20px', display: currentPosition?.noteId === note._id ? 'none' : 'block' }} id={`note-${note._id}`}
-                contentEditable suppressContentEditableWarning={true}
+                style={{ fontSize: note.fontSize || '20px' }} id={`note-${note._id}`}
             />
         </div>
     )
