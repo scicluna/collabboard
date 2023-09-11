@@ -1,12 +1,14 @@
 "use client"
 import { Doc } from "@/convex/_generated/dataModel"
+import { useDebounce } from "@/utils/debounce"
+import { useState } from "react"
 
 type NoteCardProps = {
     note: Doc<"notes">
     handleNoteDragStart: (e: React.DragEvent<Element>) => void
     handleNoteDrag: (e: React.DragEvent<Element>, note: Doc<"notes">) => void
     handleNoteDragEnd: (e: React.DragEvent<Element>, note: Doc<"notes">) => void
-    updateNoteText: (e: React.ChangeEvent<HTMLTextAreaElement>, note: Doc<"notes">) => void
+    updateNoteText: (textContent: string, note: Doc<"notes">) => void
     noteKeyDown: (e: React.KeyboardEvent<Element>, note: Doc<"notes">) => void,
     currentPosition: {
         noteId: string;
@@ -18,7 +20,14 @@ type NoteCardProps = {
 }
 
 export default function NoteCard({ note, handleNoteDragStart, handleNoteDrag, handleNoteDragEnd, updateNoteText, noteKeyDown, currentPosition }: NoteCardProps) {
+    const [textContent, setTextContent] = useState(note.text)
 
+    const debouncedUpdateNoteText = useDebounce(updateNoteText, 150)
+
+    const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+        setTextContent(e.target.value);
+        debouncedUpdateNoteText(e.target.value, note);
+    };
 
     return (
         <div key={note._id}
@@ -29,10 +38,10 @@ export default function NoteCard({ note, handleNoteDragStart, handleNoteDrag, ha
             onDrag={e => handleNoteDrag(e, note)}
             onDragEnd={e => handleNoteDragEnd(e, note)}>
             <textarea
-                value={note.text}
-                onChange={(e) => updateNoteText(e, note)}
+                value={textContent}
+                onChange={handleTextChange}
                 onKeyDown={(e) => noteKeyDown(e, note)}
-                className={`note h-full w-full  p-2  outline outline-black  focus:outline-red-600 focus:outline-4 rounded-lg`}
+                className={`note h-full w-full  p-2  outline outline-black  focus:outline-indigo-400 focus:outline-4 rounded-lg`}
                 style={{ fontSize: note.fontSize || '20px', display: currentPosition?.noteId === note._id ? 'none' : 'block' }} id={`note-${note._id}`}
                 contentEditable suppressContentEditableWarning={true}
             />

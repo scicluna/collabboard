@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useMutation } from "convex/react"
 import { api } from "@/convex/_generated/api"
 
-
 type useNoteUpdatingProps = {
     zoom: number,
 }
@@ -22,8 +21,7 @@ function useNoteUpdating({ zoom }: useNoteUpdatingProps) {
         }
     }
 
-    function updateNoteText(e: React.ChangeEvent<HTMLTextAreaElement>, note: Doc<"notes">) {
-        e.preventDefault()
+    function updateNoteText(textContent: string, note: Doc<"notes">) {
         updateNote({
             noteId: note._id,
             userId: note.userId,
@@ -34,7 +32,7 @@ function useNoteUpdating({ zoom }: useNoteUpdatingProps) {
             height: note.height,
             fontSize: note.fontSize,
             zIndex: note.zIndex,
-            text: e.currentTarget.value
+            text: textContent
         })
     }
 
@@ -51,6 +49,7 @@ function useNoteUpdating({ zoom }: useNoteUpdatingProps) {
     }
 
     function handleNoteDrag(e: React.DragEvent, note: Doc<"notes">) {
+        e.preventDefault()
         if (!initialDragPos) return;
 
         const deltaX = e.clientX - initialDragPos.x;
@@ -63,7 +62,9 @@ function useNoteUpdating({ zoom }: useNoteUpdatingProps) {
     }
 
     async function handleNoteDragEnd(e: React.DragEvent, note: Doc<"notes">) {
-        if (!initialDragPos) return;
+        e.preventDefault()
+        if (!initialDragPos || !currentPosition) return;
+
 
         const deltaX = e.clientX - initialDragPos.x;
         const deltaY = e.clientY - initialDragPos.y;

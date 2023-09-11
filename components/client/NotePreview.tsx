@@ -19,7 +19,7 @@ type NotePreviewProps = {
 
 export default function NotePreview({ currentPosition, currentBox }: NotePreviewProps) {
     let mode = currentBox ?? currentPosition
-    if (!mode) {
+    if (!mode || mode.x < 0) {
         return <></>
     }
 
@@ -30,7 +30,7 @@ export default function NotePreview({ currentPosition, currentBox }: NotePreview
             top: `${mode.y}px`,
             left: `${mode.x}px`,
         }} className="note absolute rounded-lg" >
-            <textarea className={`note h-full w-full  p-2  outline  outline-red-600 focus:outline-4 rounded-lg bg-slate-700 bg-opacity-70 `} />
+            <textarea className={`note h-full w-full  p-2  outline  outline-indigo-400 focus:outline-4 rounded-lg bg-slate-700 bg-opacity-70 `} />
         </div>
     )
 }
