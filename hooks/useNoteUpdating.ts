@@ -22,6 +22,7 @@ function useNoteUpdating({ zoom }: useNoteUpdatingProps) {
     }
 
     function updateNoteText(textContent: string, note: Doc<"notes">) {
+        console.log("here?")
         updateNote({
             noteId: note._id,
             userId: note.userId,
@@ -63,6 +64,7 @@ function useNoteUpdating({ zoom }: useNoteUpdatingProps) {
 
     async function handleNoteDragEnd(e: React.DragEvent, note: Doc<"notes">) {
         e.preventDefault()
+        e.stopPropagation()
         if (!initialDragPos || !currentPosition) return;
 
 
@@ -89,18 +91,18 @@ function useNoteUpdating({ zoom }: useNoteUpdatingProps) {
         setCurrentPosition(null);
     }
 
-    async function handleNoteResize(noteId: Id<"notes">, width: number, height: number) {
+    async function handleNoteResize(note: Doc<"notes">) {
         await updateNote({
-            noteId: noteId,
-            userId: undefined,
-            boardId: undefined,
-            width: width,
-            height: height,
-            fontSize: undefined,
-            zIndex: undefined,
-            text: undefined,
-            x: undefined,
-            y: undefined
+            noteId: note._id,
+            userId: note.userId,
+            boardId: note.boardId,
+            width: note.width,
+            height: note.height,
+            fontSize: note.fontSize,
+            zIndex: note.zIndex,
+            text: note.text,
+            x: note.x,
+            y: note.y
         })
     }
 

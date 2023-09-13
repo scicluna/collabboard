@@ -1,6 +1,3 @@
-import { Doc } from "@/convex/_generated/dataModel";
-import useNoteUpdating from "@/hooks/useNoteUpdating";
-
 type NotePreviewProps = {
     currentBox: {
         x: number;

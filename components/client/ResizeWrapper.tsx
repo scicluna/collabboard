@@ -1,20 +1,12 @@
 "use client"
 
-import { Id } from "@/convex/_generated/dataModel"
+import { Doc, Id } from "@/convex/_generated/dataModel"
 import { Dispatch, ReactNode, SetStateAction, useEffect, useRef, useState } from "react"
-
-type DimensionProps = {
-    _id: Id<any>;
-    height: number;
-    width: number;
-    x: number;
-    y: number;
-};
 
 type ResizeWrappeProps = {
     children: ReactNode
-    onUpdate: (id: Id<any>, newWidth: number, newHeight: number) => void;
-    object: DimensionProps & Record<string, any>;
+    onUpdate: (doc: Doc<any>) => void;
+    doc: Doc<any>
     moving: {
         noteId: string;
         x: number;
@@ -28,7 +20,7 @@ type ResizeWrappeProps = {
 
 type ResizingDirection = "left" | "right" | "top" | "bottom" | "top-left" | "top-right" | "bottom-left" | "bottom-right";
 
-export default function ResizeWrapper({ children, onUpdate, object, moving, setFocused, focused }: ResizeWrappeProps) {
+export default function ResizeWrapper({ children, onUpdate, doc, moving, setFocused, focused }: ResizeWrappeProps) {
     const [isResizing, setIsResizing] = useState(false);
     const [resizeDirection, setResizeDirection] = useState<null | ResizingDirection>(null);
     const [initialMousePos, setInitialMousePos] = useState<{ x: number; y: number } | null>(null);
@@ -36,7 +28,7 @@ export default function ResizeWrapper({ children, onUpdate, object, moving, setF
     const resizableRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
-        let updatedObject = object
+        let updatedObject = doc
         function handleMouseMove(e: MouseEvent) {
             if (!isResizing || !initialMousePos || !resizeDirection) return;
 
@@ -45,38 +37,38 @@ export default function ResizeWrapper({ children, onUpdate, object, moving, setF
 
             let width = updatedObject.width
             let height = updatedObject.height
-            let left = updatedObject.x
-            let top = updatedObject.y
+            let x = updatedObject.x
+            let y = updatedObject.y
 
             switch (resizeDirection) {
                 case "left":
                     width -= deltaX;
-                    left += deltaX;
+                    x += deltaX;
                     break;
                 case "right":
                     width += deltaX;
                     break;
                 case "top":
                     height -= deltaY;
-                    top += deltaY;
+                    y += deltaY;
                     break;
                 case "bottom":
                     height += deltaY;
                     break;
                 case "top-left":
                     width -= deltaX;
-                    left += deltaX;
+                    x += deltaX;
                     height -= deltaY;
-                    top += deltaY;
+                    y += deltaY;
                     break;
                 case "top-right":
                     width += deltaX;
                     height -= deltaY;
-                    top += deltaY;
+                    y += deltaY;
                     break;
                 case "bottom-left":
                     width -= deltaX;
-                    left += deltaX;
+                    x += deltaX;
                     height += deltaY;
                     break;
                 case "bottom-right":
@@ -89,16 +81,19 @@ export default function ResizeWrapper({ children, onUpdate, object, moving, setF
 
             updatedObject.width = width
             updatedObject.height = height
-            updatedObject.left = left
-            updatedObject.top = top
+            updatedObject.x = x
+            updatedObject.y = y
+
             setInitialMousePos({ x: e.clientX, y: e.clientY }); // update for continuous resizing
         }
 
         function handleMouseUp() {
+            if (isResizing) {
+                onUpdate(doc)
+            }
             setIsResizing(false);
             setResizeDirection(null);
             setInitialMousePos(null);
-            onUpdate(object._id, object.width, object.height)
         }
 
         document.addEventListener("mousemove", handleMouseMove);
@@ -126,8 +121,8 @@ export default function ResizeWrapper({ children, onUpdate, object, moving, setF
 
     return (
         <>
-            <div ref={resizableRef} className={`absolute note ${moving?.noteId === object._id && 'invisible'} outline outline-black  focus:outline-indigo-400 focus:outline-4`}
-                style={{ width: `${object.width}px`, height: `${object.height}px`, top: `${object.y}px`, left: `${object.x}px` }}
+            <div ref={resizableRef} className={`absolute note ${moving?.noteId === doc._id && 'invisible'} outline outline-black  focus:outline-indigo-400 focus:outline-4`}
+                style={{ width: `${doc.width}px`, height: `${doc.height}px`, top: `${doc.y}px`, left: `${doc.x}px` }}
                 onClick={e => setFocused(true)}
                 onBlur={handleBlur}>
                 {children}

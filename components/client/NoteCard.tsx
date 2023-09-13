@@ -1,5 +1,5 @@
 "use client"
-import { Doc, Id } from "@/convex/_generated/dataModel"
+import { Doc } from "@/convex/_generated/dataModel"
 import { useDebounce } from "@/utils/debounce"
 import { useEffect, useState } from "react"
 import ResizeWrapper from "./ResizeWrapper"
@@ -11,7 +11,7 @@ type NoteCardProps = {
     handleNoteDragEnd: (e: React.DragEvent<Element>, note: Doc<"notes">) => void
     updateNoteText: (textContent: string, note: Doc<"notes">) => void
     noteKeyDown: (e: React.KeyboardEvent<Element>, note: Doc<"notes">) => void
-    handleNoteResize: (noteId: Id<"notes">, width: number, height: number) => Promise<void>
+    handleNoteResize: (note: Doc<"notes">, isResizing: boolean) => Promise<void>
     currentPosition: {
         noteId: string;
         x: number;
@@ -38,7 +38,13 @@ export default function NoteCard({ note, handleNoteDragStart, handleNoteDrag, ha
     };
 
     return (
-        <ResizeWrapper onUpdate={handleNoteResize} object={note} moving={currentPosition} setFocused={setFocused} focused={focused}>
+        <ResizeWrapper
+            onUpdate={handleNoteResize}
+            doc={note}
+            moving={currentPosition}
+            setFocused={setFocused}
+            focused={focused}
+        >
             <div key={note._id}
                 style={{ zIndex: `${note.zIndex}px` }}
                 className={`h-full w-full note absolute rounded-lg ${currentPosition ? "" : 'transition-all duration-150'}`}

@@ -36,17 +36,17 @@ export const updateNote = mutation({
         text: v.optional(v.string()),
     },
     handler: async (ctx, args) => {
-        const queryNote = await ctx.db.get(args.noteId)
-        console.log(queryNote)
-        const userId = args.userId ?? queryNote?.userId
-        const boardId = args.boardId ?? queryNote?.boardId
-        const x = args.x ?? queryNote?.x
-        const y = args.y ?? queryNote?.y
-        const width = args.width ?? queryNote?.width
-        const height = args.height ?? queryNote?.height
-        const fontSize = args.fontSize ?? queryNote?.fontSize
-        const zIndex = args.zIndex ?? queryNote?.zIndex
-        const text = args.text ?? queryNote?.text
+        const userId = args.userId
+        const boardId = args.boardId
+        const x = args.x
+        const y = args.y
+        const width = args.width
+        const height = args.height
+        const fontSize = args.fontSize
+        const zIndex = args.zIndex
+        const text = args.text
+
+        console.log("TRYING")
 
         const updatedNote = await ctx.db.patch(args.noteId,
             {
