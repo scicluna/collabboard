@@ -24,7 +24,7 @@ type NoteCardProps = {
 
 export default function NoteCard({ note, handleNoteDragStart, handleNoteDrag, handleNoteDragEnd, updateNoteText, noteKeyDown, currentPosition, handleNoteResize, zoom }: NoteCardProps) {
     const [textContent, setTextContent] = useState(note.text)
-    const [isResizing, setIsResizing] = useState<boolean>(false);
+    const [focused, setFocused] = useState(false)
 
     useEffect(() => {
         setTextContent(note.text)
@@ -38,20 +38,19 @@ export default function NoteCard({ note, handleNoteDragStart, handleNoteDrag, ha
     };
 
     return (
-        <ResizeWrapper onUpdate={handleNoteResize} id={note._id} height={note.height} width={note.width} x={note.x} y={note.y} zoom={zoom} currentPosition={currentPosition} isResizing={isResizing} setIsResizing={setIsResizing}>
+        <ResizeWrapper onUpdate={handleNoteResize} object={note} moving={currentPosition} setFocused={setFocused} focused={focused}>
             <div key={note._id}
-                style={{ zIndex: `${note.zIndex}px`, display: currentPosition?.noteId === note._id ? 'none' : 'block' }}
-                className={`h-full w-full note absolute rounded-lg cursor-pointer  ${currentPosition || isResizing ? "" : 'transition-all duration-150'}`}
+                style={{ zIndex: `${note.zIndex}px` }}
+                className={`h-full w-full note absolute rounded-lg ${currentPosition ? "" : 'transition-all duration-150'}`}
                 draggable="true"
                 onDragStart={e => handleNoteDragStart(e)}
                 onDrag={e => handleNoteDrag(e, note)}
                 onDragEnd={e => handleNoteDragEnd(e, note)}>
-
                 <textarea
                     value={textContent}
                     onChange={handleTextChange}
                     onKeyDown={(e) => noteKeyDown(e, note)}
-                    className={`note h-full w-full  p-2  outline outline-black  focus:outline-indigo-400 focus:outline-4 rounded-lg`}
+                    className={`note h-full w-full  p-2  outline  rounded-lg ${focused && 'outline-indigo-400 outline-4'} `}
                     style={{ fontSize: note.fontSize || '20px' }} id={`note-${note._id}`}
                 />
             </div>
