@@ -11,7 +11,7 @@ type NoteCardProps = {
     handleNoteDragEnd: (e: React.DragEvent<Element>, note: Doc<"notes">) => void
     updateNoteText: (textContent: string, note: Doc<"notes">) => void
     noteKeyDown: (e: React.KeyboardEvent<Element>, note: Doc<"notes">) => void
-    handleNoteResize: (note: Doc<"notes">, isResizing: boolean) => Promise<void>
+    handleNoteResize: (note: Doc<"notes">) => Promise<void>
     currentPosition: {
         noteId: string;
         x: number;
