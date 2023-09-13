@@ -20,7 +20,7 @@ export default function Board({ userId, boardId }: BoardProps) {
     const [noteToolActive, setNoteToolActive] = useState(true)  //will eventually default to false
     const { zoom, handleZoom, dragMouseDown, dragMouseMove, dragMouseUp, cursorLogic, arrowDragKeyDown } = useDragAndZoom({ initialZoom: 1, dragToolActive })
     const { handleNoteMouseDown, handleNoteMouseMove, handleNoteMouseUp, currentBox } = useNoteTool({ noteToolActive, userId, boardId, zoom })
-    const { noteKeyDown, updateNoteText, handleNoteDragStart, handleNoteDrag, handleNoteDragEnd, currentPosition } = useNoteUpdating({ zoom })
+    const { noteKeyDown, updateNoteText, handleNoteDragStart, handleNoteDrag, handleNoteDragEnd, currentPosition, handleNoteResize } = useNoteUpdating({ zoom })
     const canvasRef = useRef(null);
 
     const notes = useQuery(api.notes.getNotes, { boardId: boardId })
@@ -91,6 +91,8 @@ export default function Board({ userId, boardId }: BoardProps) {
                         handleNoteDrag={handleNoteDrag}
                         handleNoteDragEnd={handleNoteDragEnd}
                         currentPosition={currentPosition}
+                        handleNoteResize={handleNoteResize}
+                        zoom={zoom}
                     />
                 ))}
                 <NotePreview currentBox={currentBox} currentPosition={currentPosition} />

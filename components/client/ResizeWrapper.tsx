@@ -1,115 +1,119 @@
 "use client"
 
+import { Id } from "@/convex/_generated/dataModel"
 import { useDebounce } from "@/utils/debounce"
-import { ReactNode, useRef, useState } from "react"
+import { Dispatch, ReactNode, SetStateAction, useEffect, useRef, useState } from "react"
 
 
 
 type ResizeWrappeProps = {
     children: ReactNode
-    onUpdate: (newWidth: number, newHeight: number) => void;
+    id: Id<any>
+    onUpdate: (id: Id<any>, newWidth: number, newHeight: number) => void;
+    height: number
+    width: number
+    x: number
+    y: number
+    zoom: number
+    currentPosition: {
+        noteId: string;
+        x: number;
+        y: number;
+        width: number;
+        height: number;
+    } | null;
+    isResizing: boolean
+    setIsResizing: Dispatch<SetStateAction<boolean>>
 }
 type ResizingDirection = "left" | "right" | "top" | "bottom" | "top-left" | "top-right" | "bottom-left" | "bottom-right";
 
-export default function ResizeWrapper({ children, onUpdate }: ResizeWrappeProps) {
-    const [isResizing, setIsResizing] = useState(false);
-    const [resizeDirection, setResizeDirection] = useState<null | ResizingDirection>(null);
-    const [initialDimensions, setInitialDimensions] = useState<{ width: number; height: number; left: number; top: number } | null>(null);
+export default function ResizeWrapper({ children, onUpdate, id, height, width, x, y, zoom, currentPosition, isResizing, setIsResizing }: ResizeWrappeProps) {
+    const [dimensions, setDimensions] = useState<{ width: number; height: number; left: number; top: number } | null>({ width: width, height: height, left: x, top: y });
     const [initialMousePos, setInitialMousePos] = useState<{ x: number; y: number } | null>(null);
 
-    const childRef = useRef<HTMLDivElement>(null)
+    const resizableRef = useRef<HTMLDivElement | null>(null);
 
     const debouncedUpdate = useDebounce(onUpdate, 500)
 
-    function handleResizeStart(e: React.MouseEvent, direction: ResizingDirection) {
-        e.preventDefault();
-        setIsResizing(true);
-        setInitialMousePos({ x: e.clientX, y: e.clientY });
-        setResizeDirection(direction);
+    useEffect(() => {
+        function handleResizeMove(e: MouseEvent) {
+            console.log(isResizing)
+            if (isResizing && debouncedUpdate && initialMousePos && dimensions) {
+                const canvasRect = resizableRef.current?.getBoundingClientRect();
+                if (!canvasRect) return; // Guard against null
 
-        if (childRef.current) {
-            const rect = childRef.current.getBoundingClientRect();
-            setInitialDimensions({
-                width: rect.width,
-                height: rect.height,
-                left: rect.left,
-                top: rect.top
-            });
-        }
-    }
+                const relativeX = e.clientX - canvasRect.left + window.scrollX;
+                const relativeY = e.clientY - canvasRect.top + window.scrollY;
 
-    function handleResizeMove(e: React.MouseEvent) {
-        if (isResizing && debouncedUpdate && initialMousePos && initialDimensions) {
-            const deltaX = e.clientX - initialMousePos.x;
-            const deltaY = e.clientY - initialMousePos.y;
+                const scaledX = relativeX / zoom;
+                const scaledY = relativeY / zoom;
 
-            let width = initialDimensions.width
-            let height = initialDimensions.height
-            let x = initialDimensions.left
-            let y = initialDimensions.top
+                // The rest of the logic remains unchanged...
+                const width = Math.abs(scaledX - initialMousePos.x);
+                const height = Math.abs(scaledY - initialMousePos.y);
 
-            switch (resizeDirection) {
-                case "left":
-                    width -= deltaX;
-                    x += deltaX;
-                    break;
-                case "right":
-                    width += deltaX;
-                    break;
-                case "top":
-                    height -= deltaY;
-                    y += deltaY;
-                    break;
-                case "bottom":
-                    height += deltaY;
-                    break;
-                case "top-left":
-                    width -= deltaX;
-                    x += deltaX;
-                    height -= deltaY;
-                    y += deltaY;
-                    break;
-                case "top-right":
-                    width += deltaX;
-                    height -= deltaY;
-                    y += deltaY;
-                    break;
-                case "bottom-left":
-                    width -= deltaX;
-                    y += deltaX;
-                    height += deltaY;
-                    break;
-                case "bottom-right":
-                    width += deltaX;
-                    height += deltaY;
-                    break;
-                default:
-                    return;
+                const x = scaledX > initialMousePos.x ? initialMousePos.x : initialMousePos.x - width;
+                const y = scaledY > initialMousePos.y ? initialMousePos.y : initialMousePos.y - height;
+
+                setDimensions({
+                    left: x,
+                    top: y,
+                    width,
+                    height
+                });
+
+                setInitialMousePos({ x: e.clientX, y: e.clientY }); // update for continuous resizing
+
+                debouncedUpdate(id, width, height)
             }
-
-            setInitialMousePos({ x: e.clientX, y: e.clientY }); // update for continuous resizing
-            debouncedUpdate(width, height)
         }
-    }
 
-    function handleResizeEnd() {
-        setIsResizing(false);
-        setResizeDirection(null);
+        function handleResizeEnd() {
+            console.log(isResizing)
+            setIsResizing(false);
+            setDimensions({ width: width, height: height, left: x, top: y });
+        }
+        console.log(isResizing)
+        if (isResizing) {
+            document.addEventListener('mousemove', handleResizeMove);
+            document.addEventListener('mouseup', handleResizeEnd)
+            document.addEventListener('mouseleave', handleResizeEnd)
+        } else {
+            document.removeEventListener('mousemove', handleResizeMove);
+            document.removeEventListener('mouseup', handleResizeEnd);
+            document.removeEventListener('mouseleave', handleResizeEnd)
+        }
+    }, [isResizing])
+
+    function handleResizeStart(e: React.MouseEvent, direction: ResizingDirection) {
+        setInitialMousePos({ x: e.clientX, y: e.clientY });
+        setDimensions({
+            width: width,
+            height: height,
+            left: x,
+            top: y
+        });
+        setIsResizing(true);
     }
 
     return (
-        <div>
-            <div ref={childRef}>
+        <>
+            <div ref={resizableRef} className={`absolute note`}
+                style={{ width: `${width}px`, height: `${height}px`, top: `${y}px`, left: `${x}px` }}>
                 {children}
+                <AllHandles handleResizeStart={handleResizeStart} />
             </div>
-            <AllHandles handleResizeStart={handleResizeStart} handleResizeMove={handleResizeMove} handleResizeEnd={handleResizeEnd} />
-        </div>
+        </>
     )
-
 }
 
-function ResizeHandle({ direction }: { direction: ResizingDirection }) {
-    let cssResize: string = `absolute bg-black w-4 h-4  transform`;
+type ResizeHandleProps = {
+    direction: string
+    handleResizeStart: (e: React.MouseEvent, direction: ResizingDirection) => void
+}
+
+function ResizeHandle({ direction, handleResizeStart }: ResizeHandleProps) {
+    let cssResize: string = `absolute bg-black w-4 h-4  transform note`;
     switch (direction) {
         case "left": {
             cssResize += ` -left-3 top-1/2 -translate-y-1/2 cursor-ew-resize`;
@@ -147,22 +151,25 @@ function ResizeHandle({ direction }: { direction: ResizingDirection }) {
     }
 
     return (
-        <div className={cssResize} />
+        <div className={cssResize}
+            onMouseDown={e => handleResizeStart(e, direction)}
+        />
     );
 }
 
 type HandlesProps = {
     handleResizeStart: (e: React.MouseEvent, direction: ResizingDirection) => void
-    handleResizeMove: (e: React.MouseEvent) => void
-    handleResizeEnd: () => void
 }
 
-export function AllHandles({ handleResizeStart, handleResizeMove, handleResizeEnd }: HandlesProps) {
+export function AllHandles({ handleResizeStart }: HandlesProps) {
     const directions: ResizingDirection[] = ["left", "right", "top", "bottom", "top-left", "top-right", "bottom-left", "bottom-right"]
     return (
         <>
             {directions.map(direction => (
-                <ResizeHandle key={direction} direction={direction} />
+                <ResizeHandle
+                    key={direction} direction={direction}
+                    handleResizeStart={handleResizeStart}
+                />
             ))}
         </>
     )

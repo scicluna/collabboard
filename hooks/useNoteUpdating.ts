@@ -1,5 +1,5 @@
 "use client"
-import { Doc } from "@/convex/_generated/dataModel";
+import { Doc, Id } from "@/convex/_generated/dataModel";
 import { useState } from "react";
 import { useMutation } from "convex/react"
 import { api } from "@/convex/_generated/api"
@@ -89,6 +89,21 @@ function useNoteUpdating({ zoom }: useNoteUpdatingProps) {
         setCurrentPosition(null);
     }
 
+    async function handleNoteResize(noteId: Id<"notes">, width: number, height: number) {
+        await updateNote({
+            noteId: noteId,
+            userId: undefined,
+            boardId: undefined,
+            width: width,
+            height: height,
+            fontSize: undefined,
+            zIndex: undefined,
+            text: undefined,
+            x: undefined,
+            y: undefined
+        })
+    }
+
     return {
         noteKeyDown,
         updateNoteText,
@@ -96,6 +111,7 @@ function useNoteUpdating({ zoom }: useNoteUpdatingProps) {
         handleNoteDrag,
         currentPosition,
         handleNoteDragEnd,
+        handleNoteResize
     }
 }
 
