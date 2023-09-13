@@ -8,6 +8,8 @@ import BoardToolBar from "@/components/client/BoardToolBar"
 import NoteCard from "@/components/client/NoteCard"
 import NotePreview from "@/components/client/NotePreview";
 import useNoteUpdating from "@/hooks/useNoteUpdating";
+import SvgLayer from "@/components/client/SvgLayer";
+import { useLineTool } from "@/hooks/useLineTool";
 
 type BoardProps = {
     userId: string
@@ -17,9 +19,11 @@ type BoardProps = {
 export default function Board({ userId, boardId }: BoardProps) {
     const [active, setActive] = useState(false)
     const [dragToolActive, setDragToolActive] = useState(false)
-    const [noteToolActive, setNoteToolActive] = useState(true)  //will eventually default to false
+    const [noteToolActive, setNoteToolActive] = useState(false)
+    const [lineToolActive, setLineToolActive] = useState(true)  //will eventually default to false
     const { zoom, handleZoom, dragMouseDown, dragMouseMove, dragMouseUp, cursorLogic, arrowDragKeyDown } = useDragAndZoom({ initialZoom: 1, dragToolActive })
     const { handleNoteMouseDown, handleNoteMouseMove, handleNoteMouseUp, currentBox } = useNoteTool({ noteToolActive, userId, boardId, zoom })
+    const { handleLineMouseDown, handleLineMouseMove, handleLineMouseUp, handleLineResize, lineKeyDown } = useLineTool({ lineToolActive, userId, boardId })
     const { noteKeyDown, updateNoteText, handleNoteDragStart, handleNoteDrag, handleNoteDragEnd, currentPosition, handleNoteResize } = useNoteUpdating({ zoom })
     const canvasRef = useRef(null);
 
@@ -53,6 +57,13 @@ export default function Board({ userId, boardId }: BoardProps) {
                 mouseUp: handleNoteMouseUp
             }
         }
+        if (lineToolActive) {
+            return {
+                mouseDown: handleLineMouseDown,
+                mouseMove: handleLineMouseMove,
+                mouseUp: handleLineMouseUp
+            }
+        }
 
         return {
             mouseDown: () => { },
@@ -71,6 +82,8 @@ export default function Board({ userId, boardId }: BoardProps) {
                 setDragToolActive={setDragToolActive}
                 noteToolActive={noteToolActive}
                 setNoteToolActive={setNoteToolActive}
+                lineToolActive={lineToolActive}
+                setLineToolActive={setLineToolActive}
             />
             {/* <Toolbar createNewNote={createNewNote}  createNewPin={createNewPin} createNewLine={createNewLine}/> */}
             <section ref={canvasRef} tabIndex={0} className={`w-[2500px] h-[2250px] bg-gray-100 overflow-hidden outline-none relative z-20`}
@@ -81,6 +94,13 @@ export default function Board({ userId, boardId }: BoardProps) {
                 onWheel={handleZoom}
                 onKeyDown={arrowDragKeyDown} style={{ transform: `scale(${zoom})`, cursor: cursorLogic }}>
                 {/* populate notes and connections and lines and images */}
+                <SvgLayer
+                    boardId={boardId}
+                    handleLineResize={handleLineResize}
+                    currentPosition={currentPosition}
+                    lineToolActive={lineToolActive}
+                    lineKeyDown={lineKeyDown}
+                />
                 {notes && notes.map(note => (
                     <NoteCard
                         key={note._id}

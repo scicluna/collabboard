@@ -1,4 +1,4 @@
-import { faHand, faNoteSticky } from "@fortawesome/free-solid-svg-icons";
+import { faHand, faNoteSticky, faPencil } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Dispatch, SetStateAction } from "react";
 
@@ -7,14 +7,17 @@ type BoardToolBarProps = {
     setDragToolActive: Dispatch<SetStateAction<boolean>>
     noteToolActive: boolean
     setNoteToolActive: Dispatch<SetStateAction<boolean>>
+    lineToolActive: boolean
+    setLineToolActive: Dispatch<SetStateAction<boolean>>
 }
 
 //will want styling to determine which tool is currently active. will also modify the onclick to deactivate all other options
-export default function BoardToolBar({ dragToolActive, setDragToolActive, noteToolActive, setNoteToolActive }: BoardToolBarProps) {
+export default function BoardToolBar({ dragToolActive, setDragToolActive, noteToolActive, setNoteToolActive, lineToolActive, setLineToolActive }: BoardToolBarProps) {
 
     function disableAllTools() {
         setDragToolActive(false)
         setNoteToolActive(false)
+        setLineToolActive(false)
     }
 
     return (
@@ -30,6 +33,12 @@ export default function BoardToolBar({ dragToolActive, setDragToolActive, noteTo
                 setNoteToolActive(true)
             }} className={`${noteToolActive ? `outline-[3px] outline outline-indigo-300` : `outline-none`} rounded-full  transition-all duration-15 items-center flex`} >
                 <FontAwesomeIcon icon={faNoteSticky} />
+            </button>
+            <button onClick={() => {
+                disableAllTools()
+                setLineToolActive(true)
+            }} className={`${lineToolActive ? `outline-[3px] outline outline-indigo-300` : `outline-none`} rounded-full  transition-all duration-15 items-center flex`} >
+                <FontAwesomeIcon icon={faPencil} />
             </button>
         </section>
     )

@@ -14,7 +14,7 @@ type NoteCardProps = {
     noteKeyDown: (e: React.KeyboardEvent<Element>, note: Doc<"notes">) => void
     handleNoteResize: (note: Doc<"notes">) => Promise<void>
     currentPosition: {
-        noteId: string;
+        id: string;
         x: number;
         y: number;
         width: number;

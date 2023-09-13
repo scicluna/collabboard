@@ -17,5 +17,16 @@ export default defineSchema({
         zIndex: v.number(),
         text: v.string(),
         connectedNotes: v.optional(v.array(v.string()))
+    }),
+    lines: defineTable({
+        userId: v.string(),
+        boardId: v.string(),
+        x: v.number(),
+        y: v.number(),
+        width: v.number(),
+        height: v.number(),
+        zIndex: v.number(),
+        path: v.string(),
+        strokeColor: v.string(),
     })
 });

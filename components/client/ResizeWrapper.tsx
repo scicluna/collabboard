@@ -9,7 +9,7 @@ type ResizeWrappeProps = {
     onUpdate: (doc: Doc<any>) => void;
     doc: Doc<any>
     moving: {
-        noteId: string;
+        id: string;
         x: number;
         y: number;
         width: number;
@@ -23,11 +23,12 @@ export type ResizingDirection = "left" | "right" | "top" | "bottom" | "top-left"
 
 export default function ResizeWrapper({ children, onUpdate, doc, moving, setFocused, focused }: ResizeWrappeProps) {
     const { isResizing, resize } = useResizing({ doc, onUpdate });
-    const resizableRef = useRef<HTMLDivElement | null>(null);
+    const resizableRef = useRef(null);
 
     function handleBlur() {
         if (isResizing) return
         setTimeout(() => {
+
             setFocused(false);
         }, 0);
     }
@@ -35,15 +36,21 @@ export default function ResizeWrapper({ children, onUpdate, doc, moving, setFocu
     return (
         <>
             <div ref={resizableRef}
-                className={`absolute note ${moving?.noteId === doc._id && 'invisible'} 
-                outline outline-black  focus:outline-indigo-400 focus:outline-4 rounded-md
+                className={`absolute ${moving?.id === doc._id && 'invisible'} 
+                outline outline-black rounded-md
+                z-[1000000]
+                ${focused && 'outline-indigo-400 outline-4'}
                 ${isResizing && 'noSelect'}`}
                 style={{ width: `${doc.width}px`, height: `${doc.height}px`, top: `${doc.y}px`, left: `${doc.x}px` }}
                 onClick={e => setFocused(true)}
                 onBlur={handleBlur}>
                 {children}
+                width={`${doc.width}px`}
+                height={`${doc.height}px`}
+                y={`${doc.y}px`}
+                x={`${doc.x}px`}
                 {focused && <AllHandles handleResizeStart={resize} />}
-            </div>
+            </div >
         </>
     )
 }

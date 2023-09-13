@@ -12,7 +12,7 @@ function useNoteUpdating({ zoom }: useNoteUpdatingProps) {
     const updateNote = useMutation(api.notes.updateNote)
     const deleteNote = useMutation(api.notes.deleteNote)
     const [initialDragPos, setInitialDragPos] = useState<{ x: number, y: number } | null>(null);
-    const [currentPosition, setCurrentPosition] = useState<{ noteId: string, width: number, height: number, x: number, y: number } | null>(null);
+    const [currentPosition, setCurrentPosition] = useState<{ id: string, width: number, height: number, x: number, y: number } | null>(null);
 
     async function noteKeyDown(e: React.KeyboardEvent, note: Doc<"notes">) {
         if (e.key === "Delete") {
@@ -62,7 +62,7 @@ function useNoteUpdating({ zoom }: useNoteUpdatingProps) {
         const newX = note.x + deltaX / zoom;
         const newY = note.y + deltaY / zoom;
 
-        setCurrentPosition({ noteId: note._id, width: note.width, height: note.height, x: newX, y: newY });
+        setCurrentPosition({ id: note._id, width: note.width, height: note.height, x: newX, y: newY });
     }
 
     async function handleNoteDragEnd(e: React.DragEvent, note: Doc<"notes">) {

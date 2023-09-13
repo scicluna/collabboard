@@ -16,6 +16,7 @@ import type {
 } from "convex/server";
 import type * as auth_config from "../auth/config";
 import type * as boards from "../boards";
+import type * as lines from "../lines";
 import type * as notes from "../notes";
 
 /**
@@ -29,6 +30,7 @@ import type * as notes from "../notes";
 declare const fullApi: ApiFromModules<{
   "auth/config": typeof auth_config;
   boards: typeof boards;
+  lines: typeof lines;
   notes: typeof notes;
 }>;
 export declare const api: FilterApi<
