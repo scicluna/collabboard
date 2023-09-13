@@ -21,8 +21,7 @@ function useNoteUpdating({ zoom }: useNoteUpdatingProps) {
         }
     }
 
-    function updateNoteText(textContent: string, note: Doc<"notes">) {
-        console.log("here?")
+    function updateNoteText(fontSize: number, textContent: string, note: Doc<"notes">) {
         updateNote({
             noteId: note._id,
             userId: note.userId,
@@ -31,7 +30,7 @@ function useNoteUpdating({ zoom }: useNoteUpdatingProps) {
             y: note.y,
             width: note.width,
             height: note.height,
-            fontSize: note.fontSize,
+            fontSize: fontSize,
             zIndex: note.zIndex,
             text: textContent
         })
@@ -51,7 +50,11 @@ function useNoteUpdating({ zoom }: useNoteUpdatingProps) {
 
     function handleNoteDrag(e: React.DragEvent, note: Doc<"notes">) {
         e.preventDefault()
+        e.stopPropagation()
         if (!initialDragPos) return;
+
+        //prevent odd release that sets x and y to 0
+        if (e.clientX === 0 || e.clientY === 0) return;
 
         const deltaX = e.clientX - initialDragPos.x;
         const deltaY = e.clientY - initialDragPos.y;
@@ -66,7 +69,6 @@ function useNoteUpdating({ zoom }: useNoteUpdatingProps) {
         e.preventDefault()
         e.stopPropagation()
         if (!initialDragPos || !currentPosition) return;
-
 
         const deltaX = e.clientX - initialDragPos.x;
         const deltaY = e.clientY - initialDragPos.y;

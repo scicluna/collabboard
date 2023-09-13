@@ -1,3 +1,5 @@
+"use client"
+
 type NotePreviewProps = {
     currentBox: {
         x: number;
@@ -19,6 +21,7 @@ export default function NotePreview({ currentPosition, currentBox }: NotePreview
     if (!mode || mode.x < 0) {
         return <></>
     }
+    console.log(mode.x)
 
     return (
         <div style={{

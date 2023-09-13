@@ -34,7 +34,10 @@ export default function ResizeWrapper({ children, onUpdate, doc, moving, setFocu
 
     return (
         <>
-            <div ref={resizableRef} className={`absolute note ${moving?.noteId === doc._id && 'invisible'} outline outline-black  focus:outline-indigo-400 focus:outline-4`}
+            <div ref={resizableRef}
+                className={`absolute note ${moving?.noteId === doc._id && 'invisible'} 
+                outline outline-black  focus:outline-indigo-400 focus:outline-4 rounded-md
+                ${isResizing && 'noSelect'}`}
                 style={{ width: `${doc.width}px`, height: `${doc.height}px`, top: `${doc.y}px`, left: `${doc.x}px` }}
                 onClick={e => setFocused(true)}
                 onBlur={handleBlur}>

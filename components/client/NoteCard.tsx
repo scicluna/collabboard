@@ -1,15 +1,16 @@
 "use client"
 import { Doc } from "@/convex/_generated/dataModel"
 import { useDebounce } from "@/utils/debounce"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import ResizeWrapper from "./ResizeWrapper"
+import { adjustFontSize } from "@/utils/adjustfont"
 
 type NoteCardProps = {
     note: Doc<"notes">
     handleNoteDragStart: (e: React.DragEvent<Element>) => void
     handleNoteDrag: (e: React.DragEvent<Element>, note: Doc<"notes">) => void
     handleNoteDragEnd: (e: React.DragEvent<Element>, note: Doc<"notes">) => void
-    updateNoteText: (textContent: string, note: Doc<"notes">) => void
+    updateNoteText: (fontSize: number, textContent: string, note: Doc<"notes">) => void
     noteKeyDown: (e: React.KeyboardEvent<Element>, note: Doc<"notes">) => void
     handleNoteResize: (note: Doc<"notes">) => Promise<void>
     currentPosition: {
@@ -25,16 +26,24 @@ type NoteCardProps = {
 export default function NoteCard({ note, handleNoteDragStart, handleNoteDrag, handleNoteDragEnd, updateNoteText, noteKeyDown, currentPosition, handleNoteResize, zoom }: NoteCardProps) {
     const [textContent, setTextContent] = useState(note.text)
     const [focused, setFocused] = useState(false)
+    const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
     useEffect(() => {
         setTextContent(note.text)
+    }, [note])
+
+    useEffect(() => {
+        if (textAreaRef.current) {
+            const newSize = adjustFontSize(textAreaRef.current, textContent);
+            updateNoteText(newSize, textContent, note)
+        }
     }, [note])
 
     const debouncedUpdateNoteText = useDebounce(updateNoteText, 500)
 
     const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         setTextContent(e.target.value);
-        debouncedUpdateNoteText(e.target.value, note);
+        debouncedUpdateNoteText(note.fontSize, e.target.value, note);
     };
 
     return (
@@ -53,10 +62,11 @@ export default function NoteCard({ note, handleNoteDragStart, handleNoteDrag, ha
                 onDrag={e => handleNoteDrag(e, note)}
                 onDragEnd={e => handleNoteDragEnd(e, note)}>
                 <textarea
+                    ref={textAreaRef}
                     value={textContent}
                     onChange={handleTextChange}
                     onKeyDown={(e) => noteKeyDown(e, note)}
-                    className={`note h-full w-full  p-2  outline  rounded-lg ${focused && 'outline-indigo-400 outline-4'} `}
+                    className={`note h-full w-full  p-2  outline  rounded-lg overflow-hidden ${focused && 'outline-indigo-400 outline-4'} `}
                     style={{ fontSize: note.fontSize || '20px' }} id={`note-${note._id}`}
                 />
             </div>
