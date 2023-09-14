@@ -46,8 +46,6 @@ export default function LinePath({ line, handleLineResize, moving, lineKeyDown, 
 
 
     function handleMouseMove(e: MouseEvent) {
-        e.preventDefault()
-        e.stopPropagation()
         if (!startPos) return;
 
         const deltaX = e.clientX - startPos.x;

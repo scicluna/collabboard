@@ -23,7 +23,7 @@ export default function Board({ userId, boardId }: BoardProps) {
     const [lineToolActive, setLineToolActive] = useState(true)  //will eventually default to false
     const { zoom, handleZoom, dragMouseDown, dragMouseMove, dragMouseUp, cursorLogic, arrowDragKeyDown } = useDragAndZoom({ initialZoom: 1, dragToolActive })
     const { handleNoteMouseDown, handleNoteMouseMove, handleNoteMouseUp, currentBox } = useNoteTool({ noteToolActive, userId, boardId, zoom })
-    const { handleLineMouseDown, handleLineMouseMove, handleLineMouseUp, handleLineResize, lineKeyDown, handleLineDrag, currentPath } = useLineTool({ lineToolActive, userId, boardId })
+    const { handleLineMouseDown, handleLineMouseMove, handleLineMouseUp, handleLineResize, lineKeyDown, handleLineDrag, currentPath } = useLineTool({ lineToolActive, userId, boardId, zoom })
     const { noteKeyDown, updateNoteText, handleNoteDragStart, handleNoteDrag, handleNoteDragEnd, currentPosition, handleNoteResize } = useNoteUpdating({ zoom })
     const canvasRef = useRef(null);
 
@@ -95,14 +95,6 @@ export default function Board({ userId, boardId }: BoardProps) {
                 onWheel={handleZoom}
                 onKeyDown={arrowDragKeyDown} style={{ transform: `scale(${zoom})`, cursor: cursorLogic }}>
                 {/* populate notes and connections and lines and images */}
-                <SvgLayer
-                    boardId={boardId}
-                    handleLineResize={handleLineResize}
-                    currentPosition={currentPosition}
-                    currentPath={currentPath}
-                    lineKeyDown={lineKeyDown}
-                    handleLineDrag={handleLineDrag}
-                />
                 {notes && notes.map(note => (
                     <NoteCard
                         key={note._id}
@@ -117,6 +109,15 @@ export default function Board({ userId, boardId }: BoardProps) {
                         zoom={zoom}
                     />
                 ))}
+                <SvgLayer
+                    boardId={boardId}
+                    handleLineResize={handleLineResize}
+                    currentPosition={currentPosition}
+                    currentPath={currentPath}
+                    lineKeyDown={lineKeyDown}
+                    handleLineDrag={handleLineDrag}
+                />
+
                 <NotePreview currentBox={currentBox} currentPosition={currentPosition} />
             </section>
         </main>

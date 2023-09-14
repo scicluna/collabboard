@@ -9,9 +9,10 @@ type useLineToolProps = {
     lineToolActive: boolean
     userId: string,
     boardId: string
+    zoom: number
 }
 
-export function useLineTool({ lineToolActive, userId, boardId }: useLineToolProps) {
+export function useLineTool({ lineToolActive, userId, boardId, zoom }: useLineToolProps) {
     const [currentPath, setCurrentPath] = useState("");
     const [points, setPoints] = useState<Array<[number, number]>>([]);
 
@@ -21,18 +22,32 @@ export function useLineTool({ lineToolActive, userId, boardId }: useLineToolProp
 
     const handleLineMouseDown = (e: React.MouseEvent) => {
         if (!lineToolActive) return;
-        if (e.target instanceof Element && e.target.classList.contains('line')) {
+        if (e.target instanceof Element && (e.target.classList.contains('line') || (e.target.classList.contains('note')))) {
             return;  // Do nothing if a line was clicked
         }
-        const { offsetX, offsetY } = e.nativeEvent;
-        setPoints([[offsetX, offsetY]]);
-        setCurrentPath(`M ${offsetX} ${offsetY}`);
+        const canvasRect = e.currentTarget.getBoundingClientRect();
+
+        const relativeX = e.clientX - canvasRect.left;
+        const relativeY = e.clientY - canvasRect.top;
+
+        const scaledX = relativeX / zoom;
+        const scaledY = relativeY / zoom;
+
+        setCurrentPath(`M ${scaledX} ${scaledY}`);
     };
 
     const handleLineMouseMove = (e: React.MouseEvent) => {
+        e.preventDefault()
         if (!currentPath || !points || !lineToolActive) return;
-        const { offsetX, offsetY } = e.nativeEvent;
-        setPoints(prev => [...prev, [offsetX, offsetY]]);
+        const canvasRect = e.currentTarget.getBoundingClientRect();
+
+        const relativeX = e.clientX - canvasRect.left;
+        const relativeY = e.clientY - canvasRect.top;
+
+        const scaledX = relativeX / zoom;
+        const scaledY = relativeY / zoom;
+
+        setPoints(prev => [...prev, [scaledX, scaledY]]);
 
         if (points.length > 3) {
             const lastThree = points.slice(-3); // get the last three points

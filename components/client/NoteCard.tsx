@@ -56,7 +56,8 @@ export default function NoteCard({ note, handleNoteDragStart, handleNoteDrag, ha
         >
             <div key={note._id}
                 style={{ zIndex: `${note.zIndex}px` }}
-                className={`h-full w-full note absolute rounded-lg ${currentPosition ? "" : 'transition-all duration-150'}`}
+                className={`h-full w-full note absolute rounded-lg z-10
+                 ${currentPosition ? "" : 'transition-all duration-150'}`}
                 draggable="true"
                 onDragStart={e => handleNoteDragStart(e)}
                 onDrag={e => handleNoteDrag(e, note)}

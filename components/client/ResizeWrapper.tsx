@@ -34,24 +34,17 @@ export default function ResizeWrapper({ children, onUpdate, doc, moving, setFocu
     }
 
     return (
-        <>
-            <div ref={resizableRef}
-                className={`absolute ${moving?.id === doc._id && 'invisible'} 
+        <div ref={resizableRef}
+            className={`absolute ${moving?.id === doc._id && 'invisible'} 
                 outline outline-black rounded-md
-                z-[1000000]
                 ${focused && 'outline-indigo-400 outline-4'}
                 ${isResizing && 'noSelect'}`}
-                style={{ width: `${doc.width}px`, height: `${doc.height}px`, top: `${doc.y}px`, left: `${doc.x}px` }}
-                onClick={e => setFocused(true)}
-                onBlur={handleBlur}>
-                {children}
-                width={`${doc.width}px`}
-                height={`${doc.height}px`}
-                y={`${doc.y}px`}
-                x={`${doc.x}px`}
-                {focused && <AllHandles handleResizeStart={resize} />}
-            </div >
-        </>
+            style={{ width: `${doc.width}px`, height: `${doc.height}px`, top: `${doc.y}px`, left: `${doc.x}px` }}
+            onClick={e => setFocused(true)}
+            onBlur={handleBlur}>
+            {children}
+            {focused && <AllHandles handleResizeStart={resize} />}
+        </div >
     )
 }
 

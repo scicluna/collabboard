@@ -37,6 +37,7 @@ function useNoteUpdating({ zoom }: useNoteUpdatingProps) {
     }
 
     function handleNoteDragStart(e: React.DragEvent) {
+        e.stopPropagation()
         var img = document.createElement("img");
         img.style.backgroundColor = "red";
         img.style.position = "absolute"; img.style.top = "0px"; img.style.right = "0px";
