@@ -21,6 +21,9 @@ export function useLineTool({ lineToolActive, userId, boardId }: useLineToolProp
 
     const handleLineMouseDown = (e: React.MouseEvent) => {
         if (!lineToolActive) return;
+        if (e.target instanceof Element && e.target.classList.contains('line')) {
+            return;  // Do nothing if a line was clicked
+        }
         const { offsetX, offsetY } = e.nativeEvent;
         setPoints([[offsetX, offsetY]]);
         setCurrentPath(`M ${offsetX} ${offsetY}`);
@@ -32,41 +35,56 @@ export function useLineTool({ lineToolActive, userId, boardId }: useLineToolProp
         setPoints(prev => [...prev, [offsetX, offsetY]]);
 
         if (points.length > 3) {
-            const [start, ...rest] = points;
-            const mid = rest[Math.floor(rest.length / 2)];
-            const end = rest[rest.length - 1];
+            const lastThree = points.slice(-3); // get the last three points
+            const [start, mid, end] = lastThree;
 
-            const controlPoint1 = [(start[0] + mid[0]) / 2, (start[1] + mid[1]) / 2];
+            const controlPoint1 = [mid[0], mid[1]];
             const controlPoint2 = [(end[0] + mid[0]) / 2, (end[1] + mid[1]) / 2];
 
             const newPathSegment = `C ${controlPoint1[0]} ${controlPoint1[1]}, ${controlPoint2[0]} ${controlPoint2[1]}, ${end[0]} ${end[1]}`;
             setCurrentPath(prev => `${prev} ${newPathSegment}`);
 
-            // Retain only the last two points and discard the others
-            setPoints([rest[rest.length - 2], rest[rest.length - 1]]);
+            setPoints([mid, end]);
         }
     };
 
     const handleLineMouseUp = async () => {
         if (!currentPath || !points || !lineToolActive) return
         const { x, y, width, height } = computeBoundingBox(currentPath)
-        await newLineGenerator({
-            userId: userId,
-            boardId: boardId,
-            x: x,
-            y: y,
-            width: width,
-            height: height,
-            path: currentPath,
-            zIndex: 1,
-            strokeColor: 'black'
-        })
+        if (width > 0 && height > 0) {
+            await newLineGenerator({
+                userId: userId,
+                boardId: boardId,
+                x: x,
+                y: y,
+                width: width,
+                height: height,
+                path: currentPath,
+                zIndex: 1,
+                strokeColor: 'black'
+            })
+        }
         setCurrentPath("");
         setPoints([]);
     };
 
-    function handleLineResize(line: Doc<"lines">) {
-        updateLine({
+    async function handleLineDrag(line: Doc<"lines">, newPath: string) {
+        await updateLine({
+            lineId: line._id,
+            userId: line.userId,
+            boardId: line.boardId,
+            x: line.x,
+            y: line.y,
+            width: line.width,
+            height: line.height,
+            path: newPath,
+            zIndex: line.zIndex,
+            strokeColor: line.strokeColor
+        })
+    }
+
+    async function handleLineResize(line: Doc<"lines">) {
+        await updateLine({
             lineId: line._id,
             userId: line.userId,
             boardId: line.boardId,
@@ -80,10 +98,24 @@ export function useLineTool({ lineToolActive, userId, boardId }: useLineToolProp
         })
 
     }
+
+    //hacky garbage i hate it
     async function lineKeyDown(e: React.KeyboardEvent, line: Doc<"lines">) {
         if (e.key === "Delete") {
-            e.preventDefault()
-            await deleteLine({ lineId: line._id })
+            e.preventDefault();
+
+            // Record the current scroll positions
+            const scrollX = window.scrollX;
+            const scrollY = window.scrollY;
+
+            await deleteLine({ lineId: line._id });
+            const focusDiv = document.getElementById("focusDiv");
+            if (focusDiv) {
+                focusDiv.focus();
+            }
+
+            // Restore the scroll positions
+            window.scrollTo(scrollX, scrollY);
         }
     }
 
@@ -94,6 +126,7 @@ export function useLineTool({ lineToolActive, userId, boardId }: useLineToolProp
         handleLineMouseUp,
         handleLineResize,
         lineKeyDown,
+        handleLineDrag,
         currentPath
     }
 }

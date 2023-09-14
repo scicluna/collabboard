@@ -23,7 +23,7 @@ export default function Board({ userId, boardId }: BoardProps) {
     const [lineToolActive, setLineToolActive] = useState(true)  //will eventually default to false
     const { zoom, handleZoom, dragMouseDown, dragMouseMove, dragMouseUp, cursorLogic, arrowDragKeyDown } = useDragAndZoom({ initialZoom: 1, dragToolActive })
     const { handleNoteMouseDown, handleNoteMouseMove, handleNoteMouseUp, currentBox } = useNoteTool({ noteToolActive, userId, boardId, zoom })
-    const { handleLineMouseDown, handleLineMouseMove, handleLineMouseUp, handleLineResize, lineKeyDown } = useLineTool({ lineToolActive, userId, boardId })
+    const { handleLineMouseDown, handleLineMouseMove, handleLineMouseUp, handleLineResize, lineKeyDown, handleLineDrag, currentPath } = useLineTool({ lineToolActive, userId, boardId })
     const { noteKeyDown, updateNoteText, handleNoteDragStart, handleNoteDrag, handleNoteDragEnd, currentPosition, handleNoteResize } = useNoteUpdating({ zoom })
     const canvasRef = useRef(null);
 
@@ -77,6 +77,7 @@ export default function Board({ userId, boardId }: BoardProps) {
         <main className="absolute  w-[3500px] h-[3250px]
          bg-black flex items-center justify-center"
             style={{ visibility: active ? 'visible' : 'hidden', fontFamily: 'fantasy' }} >
+            <div tabIndex={-1} id="focusDiv" style={{ position: 'absolute', top: 0, left: 0, opacity: 0, width: 1, height: 1 }}></div>
             <BoardToolBar
                 dragToolActive={dragToolActive}
                 setDragToolActive={setDragToolActive}
@@ -98,8 +99,9 @@ export default function Board({ userId, boardId }: BoardProps) {
                     boardId={boardId}
                     handleLineResize={handleLineResize}
                     currentPosition={currentPosition}
-                    lineToolActive={lineToolActive}
+                    currentPath={currentPath}
                     lineKeyDown={lineKeyDown}
+                    handleLineDrag={handleLineDrag}
                 />
                 {notes && notes.map(note => (
                     <NoteCard
