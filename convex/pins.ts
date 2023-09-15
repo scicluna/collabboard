@@ -50,9 +50,6 @@ export const linkTwoPins = mutation({
         const connectionsOne = pinOne.connectedNotes || [pinOne._id]
         const connectionsTwo = pinTwo.connectedNotes || [pinTwo._id]
 
-        console.log(connectionsOne)
-        console.log(connectionsTwo)
-
         const newPinConnectionOne = await ctx.db.patch(args.pinOneId, {
             userId: pinOne.userId,
             boardId: pinOne.boardId,

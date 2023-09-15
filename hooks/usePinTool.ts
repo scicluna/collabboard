@@ -27,15 +27,20 @@ export function usePinTool({ pinToolActive, zoom, userId, boardId }: usePinToolP
         if (!pinToolActive) return;
 
         e.stopPropagation()
-        console.log(e.target)
         if (e.target instanceof Element && (e.target.classList.contains('line') || (e.target.classList.contains('note')))) {
             return;
         } else if (e.target instanceof Element && (e.target.classList.contains('pin'))) {
-            console.log("pinning start")
-            const dataAttribute = e.target.getAttribute('data-id') as Id<"pins">
-            setLinkingPins([dataAttribute, ...linkingPins?.slice(1)])
-            setLinking(true);
-            return;
+            if (linkingPins[0] !== null) {
+                const dataAttribute = e.target.getAttribute('data-id') as Id<"pins">
+                setLinkingPins([...linkingPins?.slice(0, 1), dataAttribute])
+                return;
+            } else {
+                console.log("pinning start")
+                const dataAttribute = e.target.getAttribute('data-id') as Id<"pins">
+                setLinkingPins([dataAttribute, ...linkingPins?.slice(1)])
+                setLinking(true);
+                return;
+            }
         } else {
             const canvasRect = e.currentTarget.getBoundingClientRect();
 
@@ -53,10 +58,7 @@ export function usePinTool({ pinToolActive, zoom, userId, boardId }: usePinToolP
     function handlePinMouseMove(e: React.MouseEvent) {
         if (!pinToolActive) return;
 
-        if (e.target instanceof Element && (e.target.classList.contains('pin'))) {
-            const dataAttribute = e.target.getAttribute('data-id') as Id<"pins">
-            setLinkingPins([...linkingPins?.slice(0, 1), dataAttribute])
-        }
+
 
         const canvasRect = e.currentTarget.getBoundingClientRect();
 
@@ -72,10 +74,11 @@ export function usePinTool({ pinToolActive, zoom, userId, boardId }: usePinToolP
     //places pin in original place 
     //or if pin linking, links two pins together
     function handlePinMouseUp() {
-        if (!pinToolActive || !startPos) return;
+        if (!pinToolActive) return;
 
         //if linking was active, somehow identify both pins in question and update the db for rewrite
         //else, just post the pin to the screen
+        console.log(linkingPins)
         if (linking && linkingPins?.length === 2 && linkingPins[0] !== linkingPins[1] && linkingPins[1] !== null) {
             connectTwoPins({
                 pinOneId: linkingPins[0] as Id<"pins">,
