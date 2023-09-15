@@ -10,6 +10,7 @@ import NotePreview from "@/components/client/NotePreview";
 import useNoteUpdating from "@/hooks/useNoteUpdating";
 import SvgLayer from "@/components/client/SvgLayer";
 import { useLineTool } from "@/hooks/useLineTool";
+import Pin from "@/components/client/Pin";
 
 type BoardProps = {
     userId: string
@@ -28,9 +29,7 @@ export default function Board({ userId, boardId }: BoardProps) {
     const canvasRef = useRef(null);
 
     const notes = useQuery(api.notes.getNotes, { boardId: boardId })
-
-    //const createNewPin = useMutation("createNewPin")
-    //const createNewLine = useMutation("createNewLine")
+    const pins = useQuery(api.pins.getPins, { boardId: boardId })
 
     //center camera on load
     useEffect(() => {
@@ -108,6 +107,9 @@ export default function Board({ userId, boardId }: BoardProps) {
                         handleNoteResize={handleNoteResize}
                         zoom={zoom}
                     />
+                ))}
+                {pins && pins.map(pin => (
+                    <Pin pin={pin} />
                 ))}
                 <SvgLayer
                     boardId={boardId}

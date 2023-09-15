@@ -16,7 +16,6 @@ export default defineSchema({
         fontSize: v.number(),
         zIndex: v.number(),
         text: v.string(),
-        connectedNotes: v.optional(v.array(v.string()))
     }),
     lines: defineTable({
         userId: v.string(),
@@ -28,5 +27,13 @@ export default defineSchema({
         zIndex: v.number(),
         path: v.string(),
         strokeColor: v.string(),
+    }),
+    pins: defineTable({
+        userId: v.string(),
+        boardId: v.string(),
+        x: v.number(),
+        y: v.number(),
+        zIndex: v.number(),
+        connectedNotes: v.optional(v.array(v.id("pins")))
     })
 });
