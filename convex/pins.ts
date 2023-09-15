@@ -70,3 +70,37 @@ export const linkTwoPins = mutation({
         return newPinConnectionOne
     }
 })
+
+export const updatePin = mutation({
+    args: {
+        pinId: v.id("pins"),
+        userId: v.optional(v.string()),
+        boardId: v.optional(v.string()),
+        x: v.optional(v.number()),
+        y: v.optional(v.number()),
+        zIndex: v.optional(v.number()),
+        connectedNotes: v.optional(v.array(v.id("pins")))
+    },
+    handler: async (ctx, args) => {
+        const userId = args.userId
+        const boardId = args.boardId
+        const x = args.x
+        const y = args.y
+        const zIndex = args.zIndex
+        const connectedNotes = args.connectedNotes
+
+        console.log("TRYING")
+
+        const updatedPin = await ctx.db.patch(args.pinId,
+            {
+                userId,
+                boardId,
+                x,
+                y,
+                zIndex,
+                connectedNotes
+            })
+        return updatedPin
+    }
+
+})

@@ -12,6 +12,7 @@ import SvgLayer from "@/components/client/SvgLayer";
 import { useLineTool } from "@/hooks/useLineTool";
 import Pin from "@/components/client/Pin";
 import { usePinTool } from "@/hooks/usePinTool";
+import PinPreview from "./PinPreview";
 
 type BoardProps = {
     userId: string
@@ -123,7 +124,9 @@ export default function Board({ userId, boardId }: BoardProps) {
                 {pins && pins.map(pin => (
                     <Pin
                         key={pin._id}
-                        pin={pin} />
+                        pin={pin}
+                        currentPinPos={currentPinPos} />
+
                 ))}
                 <SvgLayer
                     boardId={boardId}
@@ -133,8 +136,8 @@ export default function Board({ userId, boardId }: BoardProps) {
                     lineKeyDown={lineKeyDown}
                     handleLineDrag={handleLineDrag}
                 />
-
                 <NotePreview currentBox={currentBox} currentPosition={currentPosition} />
+                <PinPreview currentPinPos={currentPinPos} />
             </section>
         </main>
     )

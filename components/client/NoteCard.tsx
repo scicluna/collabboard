@@ -35,15 +35,14 @@ export default function NoteCard({ note, handleNoteDragStart, handleNoteDrag, ha
     useEffect(() => {
         if (textAreaRef.current) {
             const newSize = adjustFontSize(textAreaRef.current, textContent);
-            updateNoteText(newSize, textContent, note)
+            debouncedUpdateNoteText(newSize, textContent, note)
         }
-    }, [note])
+    }, [note, textContent])
 
     const debouncedUpdateNoteText = useDebounce(updateNoteText, 500)
 
     const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         setTextContent(e.target.value);
-        debouncedUpdateNoteText(note.fontSize, e.target.value, note);
     };
 
     return (
@@ -67,7 +66,7 @@ export default function NoteCard({ note, handleNoteDragStart, handleNoteDrag, ha
                     value={textContent}
                     onChange={handleTextChange}
                     onKeyDown={(e) => noteKeyDown(e, note)}
-                    className={`note h-full w-full  p-2  outline  rounded-lg overflow-hidden ${focused && 'outline-indigo-400 outline-4'} `}
+                    className={`note h-full w-full  p-2 resize-none outline  rounded-lg overflow-hidden ${focused && 'outline-indigo-400 outline-4'} `}
                     style={{ fontSize: note.fontSize || '20px' }} id={`note-${note._id}`}
                 />
             </div>

@@ -23,7 +23,7 @@ function useNoteTool({ noteToolActive, userId, boardId, zoom }: useNotesProps) {
         // Determine if the click target or any of its parent elements has the class 'note'
         let target: any = e.target;
         while (target != null) {
-            if (target.classList && target.classList.contains('note')) {
+            if (target.classList && target.classList.contains('note') || target.classList.contains('pin') || target.classList.contains('line')) {
                 // If it's an input or textarea, focus on it
                 if (target.tagName === 'TEXTAREA' || target.tagName === 'INPUT') {
                     target.focus();
