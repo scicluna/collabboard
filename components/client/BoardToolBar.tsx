@@ -1,4 +1,4 @@
-import { faHand, faNoteSticky, faPencil } from "@fortawesome/free-solid-svg-icons";
+import { faHand, faMapPin, faNoteSticky, faPencil } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Dispatch, SetStateAction } from "react";
 
@@ -9,15 +9,18 @@ type BoardToolBarProps = {
     setNoteToolActive: Dispatch<SetStateAction<boolean>>
     lineToolActive: boolean
     setLineToolActive: Dispatch<SetStateAction<boolean>>
+    pinToolActive: boolean
+    setPinToolActive: Dispatch<SetStateAction<boolean>>
 }
 
 //will want styling to determine which tool is currently active. will also modify the onclick to deactivate all other options
-export default function BoardToolBar({ dragToolActive, setDragToolActive, noteToolActive, setNoteToolActive, lineToolActive, setLineToolActive }: BoardToolBarProps) {
+export default function BoardToolBar({ dragToolActive, setDragToolActive, noteToolActive, setNoteToolActive, lineToolActive, setLineToolActive, pinToolActive, setPinToolActive }: BoardToolBarProps) {
 
     function disableAllTools() {
         setDragToolActive(false)
         setNoteToolActive(false)
         setLineToolActive(false)
+        setPinToolActive(false)
     }
 
     return (
@@ -39,6 +42,12 @@ export default function BoardToolBar({ dragToolActive, setDragToolActive, noteTo
                 setLineToolActive(true)
             }} className={`${lineToolActive ? `outline-[3px] outline outline-indigo-300` : `outline-none`} rounded-full  transition-all duration-15 items-center flex`} >
                 <FontAwesomeIcon icon={faPencil} />
+            </button>
+            <button onClick={() => {
+                disableAllTools()
+                setPinToolActive(true)
+            }} className={`${pinToolActive ? `outline-[3px] outline outline-indigo-300` : `outline-none`} rounded-full  transition-all duration-15 items-center flex`} >
+                <FontAwesomeIcon icon={faMapPin} />
             </button>
         </section>
     )

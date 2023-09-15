@@ -11,6 +11,7 @@ import useNoteUpdating from "@/hooks/useNoteUpdating";
 import SvgLayer from "@/components/client/SvgLayer";
 import { useLineTool } from "@/hooks/useLineTool";
 import Pin from "@/components/client/Pin";
+import { usePinTool } from "@/hooks/usePinTool";
 
 type BoardProps = {
     userId: string
@@ -21,10 +22,12 @@ export default function Board({ userId, boardId }: BoardProps) {
     const [active, setActive] = useState(false)
     const [dragToolActive, setDragToolActive] = useState(false)
     const [noteToolActive, setNoteToolActive] = useState(false)
-    const [lineToolActive, setLineToolActive] = useState(true)  //will eventually default to false
+    const [lineToolActive, setLineToolActive] = useState(false)
+    const [pinToolActive, setPinToolActive] = useState(true)
     const { zoom, handleZoom, dragMouseDown, dragMouseMove, dragMouseUp, cursorLogic, arrowDragKeyDown } = useDragAndZoom({ initialZoom: 1, dragToolActive })
     const { handleNoteMouseDown, handleNoteMouseMove, handleNoteMouseUp, currentBox } = useNoteTool({ noteToolActive, userId, boardId, zoom })
     const { handleLineMouseDown, handleLineMouseMove, handleLineMouseUp, handleLineResize, lineKeyDown, handleLineDrag, currentPath } = useLineTool({ lineToolActive, userId, boardId, zoom })
+    const { handlePinMouseDown, handlePinMouseMove, handlePinMouseUp, currentPinPos } = usePinTool({ boardId, userId, pinToolActive, zoom })
     const { noteKeyDown, updateNoteText, handleNoteDragStart, handleNoteDrag, handleNoteDragEnd, currentPosition, handleNoteResize } = useNoteUpdating({ zoom })
     const canvasRef = useRef(null);
 
@@ -63,6 +66,13 @@ export default function Board({ userId, boardId }: BoardProps) {
                 mouseUp: handleLineMouseUp
             }
         }
+        if (pinToolActive) {
+            return {
+                mouseDown: handlePinMouseDown,
+                mouseMove: handlePinMouseMove,
+                mouseUp: handlePinMouseUp
+            }
+        }
 
         return {
             mouseDown: () => { },
@@ -84,6 +94,8 @@ export default function Board({ userId, boardId }: BoardProps) {
                 setNoteToolActive={setNoteToolActive}
                 lineToolActive={lineToolActive}
                 setLineToolActive={setLineToolActive}
+                pinToolActive={pinToolActive}
+                setPinToolActive={setPinToolActive}
             />
             {/* <Toolbar createNewNote={createNewNote}  createNewPin={createNewPin} createNewLine={createNewLine}/> */}
             <section ref={canvasRef} tabIndex={0} className={`w-[2500px] h-[2250px] bg-gray-100 overflow-hidden outline-none relative z-20`}
@@ -109,7 +121,9 @@ export default function Board({ userId, boardId }: BoardProps) {
                     />
                 ))}
                 {pins && pins.map(pin => (
-                    <Pin pin={pin} />
+                    <Pin
+                        key={pin._id}
+                        pin={pin} />
                 ))}
                 <SvgLayer
                     boardId={boardId}
