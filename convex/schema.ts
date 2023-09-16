@@ -35,5 +35,15 @@ export default defineSchema({
         y: v.number(),
         zIndex: v.number(),
         connectedPins: v.optional(v.array(v.id("pins")))
+    }),
+    images: defineTable({
+        userId: v.string(),
+        boardId: v.string(),
+        x: v.number(),
+        y: v.number(),
+        width: v.number(),
+        height: v.number(),
+        zIndex: v.number(),
+        storageId: v.string()
     })
 });

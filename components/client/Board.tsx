@@ -12,7 +12,9 @@ import SvgLayer from "@/components/client/SvgLayer";
 import { useLineTool } from "@/hooks/useLineTool";
 import Pin from "@/components/client/Pin";
 import { usePinTool } from "@/hooks/usePinTool";
-import PinPreview from "./PinPreview";
+import PinPreview from "@/components/client/PinPreview";
+import ImageCard from "@/components/client/ImageCard";
+import { useImage } from "@/hooks/useImage";
 
 type BoardProps = {
     userId: string
@@ -30,10 +32,12 @@ export default function Board({ userId, boardId }: BoardProps) {
     const { handleLineMouseDown, handleLineMouseMove, handleLineMouseUp, handleLineResize, lineKeyDown, handleLineDrag, currentPath } = useLineTool({ lineToolActive, userId, boardId, zoom })
     const { handlePinMouseDown, handlePinMouseMove, handlePinMouseUp, handlePinDragStart, handlePinDragMove, handlePinDragEnd, pinKeyDown, currentPinPos } = usePinTool({ boardId, userId, pinToolActive, zoom })
     const { noteKeyDown, updateNoteText, handleNoteDragStart, handleNoteDrag, handleNoteDragEnd, currentPosition, handleNoteResize } = useNoteUpdating({ zoom })
+    const { handleImageDrop } = useImage({ userId, boardId })
     const canvasRef = useRef(null);
 
     const notes = useQuery(api.notes.getNotes, { boardId: boardId })
     const pins = useQuery(api.pins.getPins, { boardId: boardId })
+    const images = useQuery(api.images.getImages, { boardId: boardId })
 
     //center camera on load
     useEffect(() => {
@@ -105,7 +109,9 @@ export default function Board({ userId, boardId }: BoardProps) {
                 onMouseUp={Tool.mouseUp}
                 onMouseLeave={Tool.mouseUp}
                 onWheel={handleZoom}
-                onKeyDown={arrowDragKeyDown} style={{ transform: `scale(${zoom})`, cursor: cursorLogic }}>
+                onKeyDown={arrowDragKeyDown} style={{ transform: `scale(${zoom})`, cursor: cursorLogic }}
+                onDragOver={e => e.preventDefault()}
+                onDrop={handleImageDrop}>
                 {/* populate notes and connections and lines and images */}
                 {notes && notes.map(note => (
                     <NoteCard
@@ -120,6 +126,9 @@ export default function Board({ userId, boardId }: BoardProps) {
                         handleNoteResize={handleNoteResize}
                         zoom={zoom}
                     />
+                ))}
+                {images && images.map(image => (
+                    <ImageCard image={image} key={image._id} />
                 ))}
                 {pins && pins.map(pin => (
                     <Pin

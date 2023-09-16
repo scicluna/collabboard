@@ -26,8 +26,6 @@ type SvgLayerProps = {
 export default function SvgLayer({ boardId, currentPosition, currentPath, handleLineResize, lineKeyDown, handleLineDrag, pins }: SvgLayerProps) {
     const lines = useQuery(api.lines.getLines, { boardId })
     const { getConnections, generateConnectionPath } = useConnections()
-    console.log(pins)
-    console.log("hi")
 
     return (
         <svg className="h-full w-full pointer-events-none absolute z-20"
