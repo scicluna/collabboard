@@ -6,8 +6,8 @@ export const getNotes = query({
     args: {
         boardId: v.string()
     },
-    handler: (ctx, args) => {
-        const notes = ctx.db.query("notes").filter(q => q.eq(q.field("boardId"), args.boardId)).collect()
+    handler: async (ctx, args) => {
+        const notes = await ctx.db.query("notes").filter(q => q.eq(q.field("boardId"), args.boardId)).collect()
         return notes
     }
 })
@@ -46,7 +46,9 @@ export const updateNote = mutation({
         const zIndex = args.zIndex
         const text = args.text
 
-        console.log("TRYING")
+        if (!await ctx.db.get(args.noteId)) {
+            return null
+        }
 
         const updatedNote = await ctx.db.patch(args.noteId,
             {

@@ -43,10 +43,39 @@ export const uploadImage = mutation({
 
 export const deleteImage = mutation({
     args: {
-        storageId: v.id("images")
+        imageId: v.id("images")
     },
     handler: async (ctx, args) => {
-        const deletedImage = await ctx.db.delete(args.storageId)
+        const deletedImage = await ctx.db.delete(args.imageId)
         return deletedImage
     }
+})
+
+export const updateImage = mutation({
+    args: {
+        imageId: v.id("images"),
+        userId: v.string(),
+        boardId: v.string(),
+        x: v.number(),
+        y: v.number(),
+        width: v.number(),
+        height: v.number(),
+        zIndex: v.number(),
+        storageId: v.string()
+    },
+    handler: async (ctx, args) => {
+        const updateLine = await ctx.db.patch(args.imageId,
+            {
+                userId: args.userId,
+                boardId: args.boardId,
+                x: args.x,
+                y: args.y,
+                width: args.width,
+                height: args.height,
+                zIndex: args.zIndex,
+                storageId: args.storageId,
+            })
+        return updateLine
+    }
+
 })

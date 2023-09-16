@@ -21,8 +21,8 @@ function useNoteUpdating({ zoom }: useNoteUpdatingProps) {
         }
     }
 
-    function updateNoteText(fontSize: number, textContent: string, note: Doc<"notes">) {
-        updateNote({
+    async function updateNoteText(fontSize: number, textContent: string, note: Doc<"notes">) {
+        await updateNote({
             noteId: note._id,
             userId: note.userId,
             boardId: note.boardId,

@@ -24,7 +24,6 @@ http.route({
         if (userId && boardId && x && y && zIndex) {
             await ctx.runMutation(api.images.uploadImage, { userId, boardId, x, y, width, height, zIndex, storageId });
         }
-        console.log("HERE")
         // Step 3: Return a response with the correct CORS headers
         return new Response(null, {
             status: 200,

@@ -2,6 +2,7 @@
 import { api } from "@/convex/_generated/api";
 import { Doc } from "@/convex/_generated/dataModel";
 import { computeBoundingBox } from "@/utils/computebindingbox";
+import { scaledMouse } from "@/utils/scaledmouse";
 import { useMutation } from "convex/react";
 import { useState } from "react";
 
@@ -22,32 +23,25 @@ export function useLineTool({ lineToolActive, userId, boardId, zoom }: useLineTo
 
     const handleLineMouseDown = (e: React.MouseEvent) => {
         if (!lineToolActive) return;
-        if (e.target instanceof Element && (e.target.classList.contains('line') || (e.target.classList.contains('note')))) {
+        if (e.target instanceof Element && ((e.target.classList.contains('line') || (e.target.classList.contains('note')) || (e.target.classList.contains('image'))))) {
             return;  // Do nothing if a line was clicked
         }
-        const canvasRect = e.currentTarget.getBoundingClientRect();
 
-        const relativeX = e.clientX - canvasRect.left;
-        const relativeY = e.clientY - canvasRect.top;
+        const { scaledX, scaledY } = scaledMouse(e, zoom)
 
-        const scaledX = relativeX / zoom;
-        const scaledY = relativeY / zoom;
+        if (scaledX && scaledY) {
+            setCurrentPath(`M ${scaledX} ${scaledY}`);
+        }
 
-        setCurrentPath(`M ${scaledX} ${scaledY}`);
     };
 
     const handleLineMouseMove = (e: React.MouseEvent) => {
         e.preventDefault()
         if (!currentPath || !points || !lineToolActive) return;
-        const canvasRect = e.currentTarget.getBoundingClientRect();
 
-        const relativeX = e.clientX - canvasRect.left;
-        const relativeY = e.clientY - canvasRect.top;
+        const { scaledX, scaledY } = scaledMouse(e, zoom);
 
-        const scaledX = relativeX / zoom;
-        const scaledY = relativeY / zoom;
-
-        setPoints(prev => [...prev, [scaledX, scaledY]]);
+        setPoints(prev => [...prev, [scaledX!, scaledY!]]);
 
         if (points.length > 3) {
             const lastThree = points.slice(-3); // get the last three points

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { scaledMouse } from "@/utils/scaledmouse";
 
 type useNotesProps = {
     noteToolActive: boolean
@@ -23,7 +24,7 @@ function useNoteTool({ noteToolActive, userId, boardId, zoom }: useNotesProps) {
         // Determine if the click target or any of its parent elements has the class 'note'
         let target: any = e.target;
         while (target != null) {
-            if (target.classList && target.classList.contains('note') || target.classList.contains('pin') || target.classList.contains('line')) {
+            if (target.classList && (target.classList.contains('note') || target.classList.contains('pin') || target.classList.contains('line') || target.classList.contains('image'))) {
                 // If it's an input or textarea, focus on it
                 if (target.tagName === 'TEXTAREA' || target.tagName === 'INPUT') {
                     target.focus();
@@ -41,27 +42,16 @@ function useNoteTool({ noteToolActive, userId, boardId, zoom }: useNotesProps) {
     function handleNoteMouseMove(e: React.MouseEvent) {
         if (!noteToolActive || !startPos || !drawingNote) return;
 
-        const canvasRect = e.currentTarget.getBoundingClientRect();
+        const { x, y, width, height } = scaledMouse(e, zoom, startPos)
 
-        const relativeX = e.clientX - canvasRect.left + e.currentTarget.scrollLeft;
-        const relativeY = e.clientY - canvasRect.top + e.currentTarget.scrollTop;
-
-        const scaledX = relativeX / zoom;
-        const scaledY = relativeY / zoom;
-
-        // The rest of the logic remains unchanged...
-        const width = Math.abs(scaledX - startPos.x);
-        const height = Math.abs(scaledY - startPos.y);
-
-        const x = scaledX > startPos.x ? startPos.x : startPos.x - width;
-        const y = scaledY > startPos.y ? startPos.y : startPos.y - height;
-
-        setCurrentBox({
-            x: x,
-            y: y,
-            width,
-            height
-        });
+        if (x && y && width && height) {
+            setCurrentBox({
+                x: x,
+                y: y,
+                width,
+                height
+            });
+        }
     }
 
     async function handleNoteMouseUp() {

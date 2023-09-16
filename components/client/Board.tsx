@@ -32,7 +32,7 @@ export default function Board({ userId, boardId }: BoardProps) {
     const { handleLineMouseDown, handleLineMouseMove, handleLineMouseUp, handleLineResize, lineKeyDown, handleLineDrag, currentPath } = useLineTool({ lineToolActive, userId, boardId, zoom })
     const { handlePinMouseDown, handlePinMouseMove, handlePinMouseUp, handlePinDragStart, handlePinDragMove, handlePinDragEnd, pinKeyDown, currentPinPos } = usePinTool({ boardId, userId, pinToolActive, zoom })
     const { noteKeyDown, updateNoteText, handleNoteDragStart, handleNoteDrag, handleNoteDragEnd, currentPosition, handleNoteResize } = useNoteUpdating({ zoom })
-    const { handleImageDrop } = useImage({ userId, boardId })
+    const { imageDragHandler, handleImageResize, handleImageDragMove, handleImageDragEnd, imageKeyDown, currentImagePos } = useImage({ userId, boardId, zoom })
     const canvasRef = useRef(null);
 
     const notes = useQuery(api.notes.getNotes, { boardId: boardId })
@@ -111,7 +111,8 @@ export default function Board({ userId, boardId }: BoardProps) {
                 onWheel={handleZoom}
                 onKeyDown={arrowDragKeyDown} style={{ transform: `scale(${zoom})`, cursor: cursorLogic }}
                 onDragOver={e => e.preventDefault()}
-                onDrop={handleImageDrop}>
+                onDrop={imageDragHandler}>
+
                 {/* populate notes and connections and lines and images */}
                 {notes && notes.map(note => (
                     <NoteCard
@@ -128,7 +129,14 @@ export default function Board({ userId, boardId }: BoardProps) {
                     />
                 ))}
                 {images && images.map(image => (
-                    <ImageCard image={image} key={image._id} />
+                    <ImageCard key={image._id}
+                        image={image}
+                        handleImageResize={handleImageResize}
+                        handleImageDragStart={imageDragHandler}
+                        handleImageDragMove={handleImageDragMove}
+                        handleImageDragEnd={handleImageDragEnd}
+                        imageKeyDown={imageKeyDown}
+                        currentImagePos={currentImagePos} />
                 ))}
                 {pins && pins.map(pin => (
                     <Pin

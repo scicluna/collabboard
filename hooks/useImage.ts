@@ -1,21 +1,41 @@
 "use client"
 
+import { api } from "@/convex/_generated/api"
+import { Doc } from "@/convex/_generated/dataModel"
+import { scaledMouse } from "@/utils/scaledmouse"
+import { useMutation } from "convex/react"
+import React, { useState } from "react"
+
 type useImageProps = {
     userId: string
     boardId: string
+    zoom: number
 }
 
-export function useImage({ userId, boardId }: useImageProps) {
+export function useImage({ userId, boardId, zoom }: useImageProps) {
+    const [initialDragPos, setInitialDragPos] = useState<{ x: number, y: number } | null>(null);
+    const [currentImagePos, setCurrentImagePos] = useState<{ id: string, x: number, y: number } | null>(null);
+
+    const updateImage = useMutation(api.images.updateImage)
+    const deleteImage = useMutation(api.images.deleteImage)
+
+    function imageDragHandler(e: React.DragEvent) {
+        if (e.dataTransfer.items.length === 1) {
+            handleImageDrop(e)
+        } else {
+            handleImageDragStart(e)
+        }
+    }
 
     const handleImageDrop = async (e: React.DragEvent) => {
-        e.preventDefault();
-
+        e.preventDefault()
+        console.log("HERE")
         const files = e.dataTransfer.files;
         if (files.length === 0) {
             return;
         }
 
-        const { clientX, clientY } = e;
+        const { scaledX, scaledY } = scaledMouse(e, zoom)
 
         const file = files[0];
         if (file.type.startsWith("image/")) {
@@ -23,8 +43,8 @@ export function useImage({ userId, boardId }: useImageProps) {
             const sendImageUrl = new URL(`${process.env.NEXT_PUBLIC_CONVEX_SITE_URL}/sendImage`);
             sendImageUrl.searchParams.set("userId", userId);
             sendImageUrl.searchParams.set("boardId", boardId);
-            sendImageUrl.searchParams.set("x", `${clientX}`);
-            sendImageUrl.searchParams.set("y", `${clientY}`);
+            sendImageUrl.searchParams.set("x", `${scaledX}`);
+            sendImageUrl.searchParams.set("y", `${scaledY}`);
             sendImageUrl.searchParams.set("width", `${100}`);
             sendImageUrl.searchParams.set("height", `${100}`);
             sendImageUrl.searchParams.set("zIndex", "1");
@@ -36,11 +56,98 @@ export function useImage({ userId, boardId }: useImageProps) {
                 });
             }
         } else {
-            alert("Please upload a valid image format.");
+            alert("The file name matches an existing pattern or is not a valid image format.");
         }
     };
 
+    async function handleImageResize(image: Doc<"images">) {
+        await updateImage({
+            imageId: image._id,
+            userId: image.userId,
+            boardId: image.boardId,
+            x: image.x,
+            y: image.y,
+            width: image.width,
+            height: image.height,
+            zIndex: image.zIndex,
+            storageId: image.storageId
+        })
+    }
+
+    async function handleImageDragStart(e: React.DragEvent) {
+        console.log("here")
+        var img = document.createElement("img");
+        img.style.backgroundColor = "red";
+        img.style.position = "absolute"; img.style.top = "0px"; img.style.right = "0px";
+        document.body.appendChild(img);
+        e.dataTransfer.setDragImage(img, 0, 0);
+        setInitialDragPos({
+            x: e.clientX,
+            y: e.clientY
+        });
+    }
+
+    async function handleImageDragMove(e: React.DragEvent, image: Doc<"images">) {
+        e.preventDefault()
+
+        console.log("HI")
+        if (!initialDragPos) return;
+
+        //prevent odd release that sets x and y to 0
+        if (e.clientX === 0 || e.clientY === 0) return;
+
+        const deltaX = e.clientX - initialDragPos.x;
+        const deltaY = e.clientY - initialDragPos.y;
+
+        const newX = image.x + deltaX / zoom;
+        const newY = image.y + deltaY / zoom;
+
+        setCurrentImagePos({ id: image._id, x: newX, y: newY });
+    }
+
+    async function handleImageDragEnd(e: React.DragEvent, image: Doc<"images">) {
+        if (currentImagePos) {
+            await updateImage({
+                imageId: image._id,
+                userId: userId,
+                boardId: boardId,
+                x: currentImagePos.x,
+                y: currentImagePos.y,
+                height: image.height,
+                width: image.width,
+                zIndex: image.zIndex,
+                storageId: image.storageId
+            })
+        }
+        setInitialDragPos(null);
+        setCurrentImagePos(null);
+    }
+
+    async function imageKeyDown(e: React.KeyboardEvent, image: Doc<"images">) {
+        if (e.key === "Delete") {
+            e.preventDefault();
+
+            // Record the current scroll positions
+            const scrollX = window.scrollX;
+            const scrollY = window.scrollY;
+
+            await deleteImage({ imageId: image._id });
+            const focusDiv = document.getElementById("focusDiv");
+            if (focusDiv) {
+                focusDiv.focus();
+            }
+
+            // Restore the scroll positions
+            window.scrollTo(scrollX, scrollY);
+        }
+    }
+
     return {
-        handleImageDrop
+        imageDragHandler,
+        handleImageResize,
+        handleImageDragMove,
+        handleImageDragEnd,
+        imageKeyDown,
+        currentImagePos
     }
 }

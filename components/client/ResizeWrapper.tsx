@@ -12,8 +12,8 @@ type ResizeWrappeProps = {
         id: string;
         x: number;
         y: number;
-        width: number;
-        height: number;
+        width?: number;
+        height?: number;
     } | null;
     setFocused: Dispatch<SetStateAction<boolean>>
     focused: boolean
@@ -35,7 +35,7 @@ export default function ResizeWrapper({ children, onUpdate, doc, moving, setFocu
     return (
         <div ref={resizableRef}
             className={`absolute ${moving?.id === doc._id && 'invisible'} 
-                outline outline-black rounded-md
+                outline outline-black rounded-md -z-10
                 ${focused && 'outline-indigo-400 outline-4'}
                 ${isResizing && 'noSelect'}`}
             style={{ width: `${doc.width}px`, height: `${doc.height}px`, top: `${doc.y}px`, left: `${doc.x}px` }}
