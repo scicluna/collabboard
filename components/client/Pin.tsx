@@ -5,9 +5,12 @@ import { useState } from "react"
 type PinProps = {
     pin: Doc<"pins">
     currentPinPos: { id: string, x: number, y: number } | null
+    handlePinDragStart: (e: React.DragEvent<Element>) => void
+    handlePinDragMove: (e: React.DragEvent<Element>, note: Doc<"pins">) => void
+    handlePinDragEnd: (e: React.DragEvent<Element>, note: Doc<"pins">) => void
 }
 
-export default function Pin({ pin, currentPinPos }: PinProps) {
+export default function Pin({ pin, currentPinPos, handlePinDragStart, handlePinDragMove, handlePinDragEnd }: PinProps) {
     const [focus, setFocus] = useState(false)
     return (
         <div
@@ -22,6 +25,10 @@ export default function Pin({ pin, currentPinPos }: PinProps) {
             onClick={e => setFocus(true)}
             onBlur={e => setFocus(false)}
             data-id={pin._id}
+            draggable={true}
+            onDragStart={handlePinDragStart}
+            onDrag={e => handlePinDragMove(e, pin)}
+            onDragEnd={e => handlePinDragEnd(e, pin)}
         >
             <svg
                 width="100%"

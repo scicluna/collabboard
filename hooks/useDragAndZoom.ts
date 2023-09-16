@@ -27,7 +27,7 @@ function useDragAndZoom({ initialZoom = 1, dragToolActive = true }: UseDragAndZo
     }
 
     function dragMouseDown(e: React.MouseEvent) {
-        if ((e.target as HTMLElement).classList.contains('note')) return;
+        if ((e.target as HTMLElement).classList.contains('note') || (e.target as HTMLElement).classList.contains('pin') || (e.target as HTMLElement).classList.contains('line')) return;
         if (!dragToolActive) return;
 
         window.getSelection()?.removeAllRanges();
