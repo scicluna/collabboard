@@ -102,5 +102,15 @@ export const updatePin = mutation({
             })
         return updatedPin
     }
+})
 
+export const deletePin = mutation({
+    args: {
+        pinId: v.id("pins")
+    },
+    handler: async (ctx, args) => {
+        console.log("delete pin")
+        const deletedPin = await ctx.db.delete(args.pinId)
+        return deletedPin
+    }
 })

@@ -18,7 +18,7 @@ export function useLineTool({ lineToolActive, userId, boardId, zoom }: useLineTo
 
     const newLineGenerator = useMutation(api.lines.createNewLine)
     const updateLine = useMutation(api.lines.updateLine)
-    const deleteLine = useMutation(api.lines.deleteNote)
+    const deleteLine = useMutation(api.lines.deleteLine)
 
     const handleLineMouseDown = (e: React.MouseEvent) => {
         if (!lineToolActive) return;

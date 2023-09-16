@@ -84,7 +84,7 @@ export const updateLine = mutation({
 
 })
 
-export const deleteNote = mutation({
+export const deleteLine = mutation({
     args: {
         lineId: v.id("lines")
     },

@@ -28,7 +28,7 @@ export default function Board({ userId, boardId }: BoardProps) {
     const { zoom, handleZoom, dragMouseDown, dragMouseMove, dragMouseUp, cursorLogic, arrowDragKeyDown } = useDragAndZoom({ initialZoom: 1, dragToolActive })
     const { handleNoteMouseDown, handleNoteMouseMove, handleNoteMouseUp, currentBox } = useNoteTool({ noteToolActive, userId, boardId, zoom })
     const { handleLineMouseDown, handleLineMouseMove, handleLineMouseUp, handleLineResize, lineKeyDown, handleLineDrag, currentPath } = useLineTool({ lineToolActive, userId, boardId, zoom })
-    const { handlePinMouseDown, handlePinMouseMove, handlePinMouseUp, handlePinDragStart, handlePinDragMove, handlePinDragEnd, currentPinPos } = usePinTool({ boardId, userId, pinToolActive, zoom })
+    const { handlePinMouseDown, handlePinMouseMove, handlePinMouseUp, handlePinDragStart, handlePinDragMove, handlePinDragEnd, pinKeyDown, currentPinPos } = usePinTool({ boardId, userId, pinToolActive, zoom })
     const { noteKeyDown, updateNoteText, handleNoteDragStart, handleNoteDrag, handleNoteDragEnd, currentPosition, handleNoteResize } = useNoteUpdating({ zoom })
     const canvasRef = useRef(null);
 
@@ -128,7 +128,8 @@ export default function Board({ userId, boardId }: BoardProps) {
                         currentPinPos={currentPinPos}
                         handlePinDragStart={handlePinDragStart}
                         handlePinDragMove={handlePinDragMove}
-                        handlePinDragEnd={handlePinDragEnd} />
+                        handlePinDragEnd={handlePinDragEnd}
+                        pinKeyDown={pinKeyDown} />
                 ))}
                 <SvgLayer
                     boardId={boardId}

@@ -22,6 +22,7 @@ export function usePinTool({ pinToolActive, zoom, userId, boardId }: usePinToolP
     const createNewPin = useMutation(api.pins.createNewPin);
     const connectTwoPins = useMutation(api.pins.linkTwoPins);
     const updatePin = useMutation(api.pins.updatePin);
+    const deletePin = useMutation(api.pins.deletePin);
 
     //designates place to put pin
     //if its clicking a pin - initiate pin linking
@@ -135,6 +136,26 @@ export function usePinTool({ pinToolActive, zoom, userId, boardId }: usePinToolP
         setCurrentPos(null);
     }
 
+    //hacky garbage i hate it
+    async function pinKeyDown(e: React.KeyboardEvent, pin: Doc<"pins">) {
+        if (e.key === "Delete") {
+            e.preventDefault();
+
+            // Record the current scroll positions
+            const scrollX = window.scrollX;
+            const scrollY = window.scrollY;
+
+            await deletePin({ pinId: pin._id });
+            const focusDiv = document.getElementById("focusDiv");
+            if (focusDiv) {
+                focusDiv.focus();
+            }
+
+            // Restore the scroll positions
+            window.scrollTo(scrollX, scrollY);
+        }
+    }
+
     return {
         handlePinMouseDown,
         handlePinMouseMove,
@@ -142,6 +163,7 @@ export function usePinTool({ pinToolActive, zoom, userId, boardId }: usePinToolP
         handlePinDragStart,
         handlePinDragMove,
         handlePinDragEnd,
+        pinKeyDown,
         currentPinPos
     }
 
