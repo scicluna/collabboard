@@ -21,7 +21,7 @@ export default function ImageCard({ image, handleImageResize, handleImageDragSta
 
     return (
         <ResizeWrapper focused={focused} setFocused={setFocused} doc={image} onUpdate={handleImageResize} moving={currentImagePos} >
-            <Image src={image.url} alt={"uploaded image"} fill className="!inset-0 image"
+            <Image src={image.url} alt={"uploaded image"} fill className="!inset-0 image outline-none"
                 style={{ position: 'absolute', left: image.x, top: image.y }}
                 draggable={true}
                 onDragStart={handleImageDragStart}

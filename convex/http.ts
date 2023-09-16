@@ -30,7 +30,7 @@ http.route({
             // CORS headers
             headers: new Headers({
                 // e.g. https://mywebsite.com
-                "Access-Control-Allow-Origin": "http://localhost:3000",
+                "Access-Control-Allow-Origin": process.env.NEXT_PUBLIC_CLIENT_ORIGIN!,
                 "Vary": "origin",
             }),
         });
@@ -53,7 +53,7 @@ http.route({
             return new Response(null, {
                 headers: new Headers({
                     // e.g. https://mywebsite.com
-                    "Access-Control-Allow-Origin": "http://localhost:3000",
+                    "Access-Control-Allow-Origin": process.env.NEXT_PUBLIC_CLIENT_ORIGIN!,
                     "Access-Control-Allow-Methods": "POST",
                     "Access-Control-Allow-Headers": "Content-Type",
                 }),
