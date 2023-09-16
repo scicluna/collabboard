@@ -19,7 +19,7 @@ export const createNewPin = mutation({
         x: v.number(),
         y: v.number(),
         zIndex: v.number(),
-        connectedNotes: v.optional(v.array(v.id("pins")))
+        connectedPins: v.optional(v.array(v.id("pins")))
     },
     handler: async (ctx, args) => {
         const newPin = await ctx.db.insert("pins",
@@ -29,7 +29,7 @@ export const createNewPin = mutation({
                 x: args.x,
                 y: args.y,
                 zIndex: args.zIndex,
-                connectedNotes: args.connectedNotes
+                connectedPins: args.connectedPins
             })
         return newPin
     }
@@ -47,8 +47,8 @@ export const linkTwoPins = mutation({
 
         if (!pinOne || !pinTwo) return
 
-        const connectionsOne = pinOne.connectedNotes || [pinOne._id]
-        const connectionsTwo = pinTwo.connectedNotes || [pinTwo._id]
+        const connectionsOne = pinOne.connectedPins || [pinOne._id]
+        const connectionsTwo = pinTwo.connectedPins || [pinTwo._id]
 
         const newPinConnectionOne = await ctx.db.patch(args.pinOneId, {
             userId: pinOne.userId,
@@ -56,7 +56,7 @@ export const linkTwoPins = mutation({
             x: pinOne.x,
             y: pinOne.y,
             zIndex: pinOne.zIndex,
-            connectedNotes: [...connectionsOne, pinTwo._id]
+            connectedPins: [...connectionsOne, pinTwo._id]
         })
         const newPinConnectionTwo = await ctx.db.patch(args.pinTwoId, {
             userId: pinTwo.userId,
@@ -64,7 +64,7 @@ export const linkTwoPins = mutation({
             x: pinTwo.x,
             y: pinTwo.y,
             zIndex: pinTwo.zIndex,
-            connectedNotes: [...connectionsTwo, pinOne._id]
+            connectedPins: [...connectionsTwo, pinOne._id]
         })
 
         return newPinConnectionOne
@@ -79,7 +79,7 @@ export const updatePin = mutation({
         x: v.optional(v.number()),
         y: v.optional(v.number()),
         zIndex: v.optional(v.number()),
-        connectedNotes: v.optional(v.array(v.id("pins")))
+        connectedPins: v.optional(v.array(v.id("pins")))
     },
     handler: async (ctx, args) => {
         const userId = args.userId
@@ -87,7 +87,7 @@ export const updatePin = mutation({
         const x = args.x
         const y = args.y
         const zIndex = args.zIndex
-        const connectedNotes = args.connectedNotes
+        const connectedPins = args.connectedPins
 
         console.log("TRYING")
 
@@ -98,7 +98,7 @@ export const updatePin = mutation({
                 x,
                 y,
                 zIndex,
-                connectedNotes
+                connectedPins
             })
         return updatedPin
     }

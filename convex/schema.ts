@@ -34,6 +34,6 @@ export default defineSchema({
         x: v.number(),
         y: v.number(),
         zIndex: v.number(),
-        connectedNotes: v.optional(v.array(v.id("pins")))
+        connectedPins: v.optional(v.array(v.id("pins")))
     })
 });

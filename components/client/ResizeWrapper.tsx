@@ -28,7 +28,6 @@ export default function ResizeWrapper({ children, onUpdate, doc, moving, setFocu
     function handleBlur() {
         if (isResizing) return
         setTimeout(() => {
-
             setFocused(false);
         }, 0);
     }

@@ -138,6 +138,7 @@ export default function Board({ userId, boardId }: BoardProps) {
                     currentPath={currentPath}
                     lineKeyDown={lineKeyDown}
                     handleLineDrag={handleLineDrag}
+                    pins={pins}
                 />
                 <NotePreview currentBox={currentBox} currentPosition={currentPosition} />
                 <PinPreview currentPinPos={currentPinPos} />
