@@ -118,8 +118,12 @@ export function usePinTool({ pinToolActive, zoom, userId, boardId }: usePinToolP
         const deltaX = e.clientX - initialDragPos.x;
         const deltaY = e.clientY - initialDragPos.y;
 
-        const newX = pin.x + deltaX / zoom;
-        const newY = pin.y + deltaY / zoom;
+
+        const startX = pin.x + pin.width / 2;
+        const startY = pin.y + pin.height / 2; // Adjusted for center
+
+        const newX = startX + deltaX / zoom;
+        const newY = startY + deltaY / zoom;
 
         setCurrentPos({ id: pin._id, x: newX, y: newY, height: pin.height, width: pin.width });
     }

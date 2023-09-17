@@ -31,7 +31,7 @@ export default function SvgLayer({ boardId, currentPosition, currentPath, handle
     console.log(pins)
     return (
         <svg className="h-full w-full pointer-events-none absolute z-20"
-            viewBox="0 0 2500 2250"
+            viewBox="0 0 2500 1500"
             preserveAspectRatio="xMidYMid meet"
             width="100%"
             height="100%"

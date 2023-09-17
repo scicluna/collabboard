@@ -15,6 +15,7 @@ import { usePinTool } from "@/hooks/usePinTool";
 import PinPreview from "@/components/client/PinPreview";
 import ImageCard from "@/components/client/ImageCard";
 import { useImage } from "@/hooks/useImage";
+import Rail from "@/components/server/Rail";
 
 type BoardProps = {
     userId: string
@@ -103,7 +104,7 @@ export default function Board({ userId, boardId }: BoardProps) {
                 setPinToolActive={setPinToolActive}
             />
             {/* <Toolbar createNewNote={createNewNote}  createNewPin={createNewPin} createNewLine={createNewLine}/> */}
-            <section ref={canvasRef} tabIndex={0} className={`w-[2500px] h-[2250px] bg-gray-100 overflow-hidden outline-none relative z-20`}
+            <section ref={canvasRef} tabIndex={0} className={`w-[2500px] h-[1500px] bg-gray-100 overflow-hidden outline-none relative z-20`}
                 onMouseDown={Tool.mouseDown}
                 onMouseMove={Tool.mouseMove}
                 onMouseUp={Tool.mouseUp}
@@ -161,7 +162,9 @@ export default function Board({ userId, boardId }: BoardProps) {
                 />
                 <NotePreview currentBox={currentBox} currentPosition={currentPosition} />
                 <PinPreview currentPinPos={currentPinPos} />
+
             </section>
+            <Rail zoom={zoom} />
         </main>
     )
 
