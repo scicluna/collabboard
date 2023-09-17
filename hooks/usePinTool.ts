@@ -15,9 +15,10 @@ type usePinToolProps = {
 export function usePinTool({ pinToolActive, zoom, userId, boardId }: usePinToolProps) {
     const [startPos, setStartPos] = useState<{ x: number, y: number } | null>(null);
     const [initialDragPos, setInitialDragPos] = useState<{ x: number, y: number } | null>(null)
-    const [currentPinPos, setCurrentPos] = useState<{ id: string, x: number, y: number } | null>(null);
+    const [currentPinPos, setCurrentPos] = useState<{ id: string, x: number, y: number, height: number, width: number } | null>(null);
     const [linking, setLinking] = useState(false);
     const [linkingPins, setLinkingPins] = useState<string[]>(new Array(2).fill(null))
+    const [dragging, setDragging] = useState(false)
 
     const createNewPin = useMutation(api.pins.createNewPin);
     const connectTwoPins = useMutation(api.pins.linkTwoPins);
@@ -38,14 +39,13 @@ export function usePinTool({ pinToolActive, zoom, userId, boardId }: usePinToolP
                 setLinkingPins([...linkingPins?.slice(0, 1), dataAttribute])
                 return;
             } else {
-                console.log("pinning start")
                 const dataAttribute = e.target.getAttribute('data-id') as Id<"pins">
                 setLinkingPins([dataAttribute, ...linkingPins?.slice(1)])
                 setLinking(true);
                 return;
             }
         } else {
-            setLinking(false);
+            //just create a pin
             const canvasRect = e.currentTarget.getBoundingClientRect();
 
             const relativeX = e.clientX - canvasRect.left;
@@ -68,16 +68,18 @@ export function usePinTool({ pinToolActive, zoom, userId, boardId }: usePinToolP
     //or if pin linking, links two pins together
     async function handlePinMouseUp() {
         if (!pinToolActive) return;
-        //if linking was active, somehow identify both pins in question and update the db for rewrite
-        //else, just post the pin to the screen
         if (linking && linkingPins?.length === 2 && linkingPins[0] !== linkingPins[1] && linkingPins[1] !== null) {
-            await connectTwoPins({
-                pinOneId: linkingPins[0] as Id<"pins">,
-                pinTwoId: linkingPins[1] as Id<"pins">
-            })
+            //if we were dragging, disregard and reset the linking
+            if (!dragging) {
+                await connectTwoPins({
+                    pinOneId: linkingPins[0] as Id<"pins">,
+                    pinTwoId: linkingPins[1] as Id<"pins">
+                })
+            }
             setLinking(false);
-            setCurrentPos(null);
             setLinkingPins(new Array(2).fill(null))
+
+            //if we have a start pos(make new pin)
         } else if (startPos) {
             await createNewPin({
                 userId: userId,
@@ -86,12 +88,12 @@ export function usePinTool({ pinToolActive, zoom, userId, boardId }: usePinToolP
                 y: startPos.y,
                 zIndex: 1
             })
+            setStartPos(null)
         }
-        setStartPos(null);
-        setCurrentPos(null);
     }
 
     function handlePinDragStart(e: React.DragEvent) {
+        setDragging(true);
         e.stopPropagation()
         var img = document.createElement("img");
         img.style.backgroundColor = "red";
@@ -104,7 +106,8 @@ export function usePinTool({ pinToolActive, zoom, userId, boardId }: usePinToolP
         });
     }
 
-    function handlePinDragMove(e: React.DragEvent, note: Doc<"pins">) {
+    function handlePinDragMove(e: React.DragEvent, pin: Doc<"pins">) {
+        console.log(pin)
         e.preventDefault()
         e.stopPropagation()
         if (!initialDragPos) return;
@@ -115,13 +118,14 @@ export function usePinTool({ pinToolActive, zoom, userId, boardId }: usePinToolP
         const deltaX = e.clientX - initialDragPos.x;
         const deltaY = e.clientY - initialDragPos.y;
 
-        const newX = note.x + deltaX / zoom;
-        const newY = note.y + deltaY / zoom;
+        const newX = pin.x + deltaX / zoom;
+        const newY = pin.y + deltaY / zoom;
 
-        setCurrentPos({ id: note._id, x: newX, y: newY });
+        setCurrentPos({ id: pin._id, x: newX, y: newY, height: pin.height, width: pin.width });
     }
 
     async function handlePinDragEnd(e: React.DragEvent, pin: Doc<"pins">) {
+        //if we dragged it any distance update the pin with the new location
         if (currentPinPos) {
             await updatePin({
                 pinId: pin._id,
@@ -129,11 +133,19 @@ export function usePinTool({ pinToolActive, zoom, userId, boardId }: usePinToolP
                 boardId: boardId,
                 x: currentPinPos.x,
                 y: currentPinPos.y,
+                width: pin.width,
+                height: pin.height,
                 zIndex: 1,
+                connectedPins: pin.connectedPins
             })
         }
+        //reset all states after a drag
         setInitialDragPos(null);
+        setStartPos(null)
         setCurrentPos(null);
+        setDragging(false);
+        setLinkingPins(new Array(2).fill(null))
+        setLinking(false);
     }
 
     //hacky garbage i hate it
@@ -156,6 +168,20 @@ export function usePinTool({ pinToolActive, zoom, userId, boardId }: usePinToolP
         }
     }
 
+    async function handlePinResize(pin: Doc<"pins">) {
+        await updatePin({
+            pinId: pin._id,
+            userId: pin.userId,
+            boardId: pin.boardId,
+            x: pin.x,
+            y: pin.y,
+            height: pin.height,
+            width: pin.width,
+            zIndex: pin.zIndex,
+            connectedPins: pin.connectedPins
+        })
+    }
+
     return {
         handlePinMouseDown,
         handlePinMouseMove,
@@ -164,6 +190,7 @@ export function usePinTool({ pinToolActive, zoom, userId, boardId }: usePinToolP
         handlePinDragMove,
         handlePinDragEnd,
         pinKeyDown,
+        handlePinResize,
         currentPinPos
     }
 

@@ -1,5 +1,5 @@
 type PinPreviewProps = {
-    currentPinPos: { x: number, y: number } | null
+    currentPinPos: { id: string, x: number, y: number, height: number, width: number } | null
 }
 
 export default function PinPreview({ currentPinPos }: PinPreviewProps) {
@@ -7,8 +7,8 @@ export default function PinPreview({ currentPinPos }: PinPreviewProps) {
 
     return (
         <div
-            style={{ top: `${currentPinPos.y}px`, left: `${currentPinPos.x}px` }}
-            className={`absolute pin h-12 w-8 flex justify-center items-center text-indigo-300 -translate-x-1/2 -translate-y-1/2`}
+            style={{ top: `${currentPinPos.y}px`, left: `${currentPinPos.x}px`, height: `${currentPinPos.height}px`, width: `${currentPinPos.width}px` }}
+            className={`absolute pin flex justify-center items-center text-indigo-300 `}
         >
             <svg
                 width="100%"

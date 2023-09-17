@@ -19,6 +19,8 @@ export const createNewPin = mutation({
         x: v.number(),
         y: v.number(),
         zIndex: v.number(),
+        height: v.optional(v.number()),
+        width: v.optional(v.number()),
         connectedPins: v.optional(v.array(v.id("pins")))
     },
     handler: async (ctx, args) => {
@@ -28,6 +30,8 @@ export const createNewPin = mutation({
                 boardId: args.boardId,
                 x: args.x,
                 y: args.y,
+                height: 100,
+                width: 100,
                 zIndex: args.zIndex,
                 connectedPins: args.connectedPins
             })
@@ -56,6 +60,8 @@ export const linkTwoPins = mutation({
             x: pinOne.x,
             y: pinOne.y,
             zIndex: pinOne.zIndex,
+            height: pinOne.height,
+            width: pinOne.width,
             connectedPins: [...connectionsOne, pinTwo._id]
         })
         const newPinConnectionTwo = await ctx.db.patch(args.pinTwoId, {
@@ -63,6 +69,8 @@ export const linkTwoPins = mutation({
             boardId: pinTwo.boardId,
             x: pinTwo.x,
             y: pinTwo.y,
+            height: pinTwo.height,
+            width: pinTwo.width,
             zIndex: pinTwo.zIndex,
             connectedPins: [...connectionsTwo, pinOne._id]
         })
@@ -78,6 +86,8 @@ export const updatePin = mutation({
         boardId: v.optional(v.string()),
         x: v.optional(v.number()),
         y: v.optional(v.number()),
+        height: v.optional(v.number()),
+        width: v.optional(v.number()),
         zIndex: v.optional(v.number()),
         connectedPins: v.optional(v.array(v.id("pins")))
     },
@@ -86,6 +96,8 @@ export const updatePin = mutation({
         const boardId = args.boardId
         const x = args.x
         const y = args.y
+        const height = args.height
+        const width = args.width
         const zIndex = args.zIndex
         const connectedPins = args.connectedPins
 
@@ -97,6 +109,8 @@ export const updatePin = mutation({
                 boardId,
                 x,
                 y,
+                height,
+                width,
                 zIndex,
                 connectedPins
             })

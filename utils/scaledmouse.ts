@@ -22,8 +22,6 @@ export function scaledMouse(e: React.MouseEvent, zoom: number, pos?: { x: number
             scaledX, scaledY
         }
     }
-    // The rest of the logic remains unchanged...
-
     return {
         x, y, width, height
     }

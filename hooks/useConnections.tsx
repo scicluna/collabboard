@@ -1,6 +1,7 @@
 "use client"
 
 import { Doc } from "@/convex/_generated/dataModel";
+import { useRef } from "react";
 
 export type Connection = {
     pinOne: Doc<"pins">
@@ -8,11 +9,11 @@ export type Connection = {
 }
 
 export function useConnections() {
-    const drawnConnections = new Set()
-    drawnConnections.clear()
+    const drawnConnections = useRef(new Set()).current;
 
     function getConnections(pins: Doc<"pins">[]) {
         const connections: Connection[] = [];
+        drawnConnections.clear()
 
         if (!pins) return []
 
@@ -32,9 +33,13 @@ export function useConnections() {
         return connections
     }
 
-    function generateConnectionPath(pin: Doc<"pins">, connectedPin: Doc<"pins">): JSX.Element | null {
+    function generateConnectionPath(
+        pin: Doc<"pins"> | { _id: string, x: number, y: number },
+        connectedPin: Doc<"pins"> | { _id: string, x: number, y: number },
+        currentPinPos?: { id: string, x: number, y: number } | null): JSX.Element | null {
         const connectionKey = [pin._id, connectedPin._id].sort().join('-');
 
+        console.log("go")
         if (!drawnConnections.has(connectionKey) && pin._id !== connectedPin._id) {
             drawnConnections.add(connectionKey)
 
@@ -48,7 +53,19 @@ export function useConnections() {
             const controlPoint2X = connectedPin.x - (deltaX / 3);
             const controlPoint2Y = connectedPin.y + offset;
 
-            const pathData = `M${pin.x} ${pin.y} C${controlPoint1X} ${controlPoint1Y}, ${controlPoint2X} ${controlPoint2Y}, ${connectedPin.x} ${connectedPin.y}`;
+            let origin: 'left' | 'right' | 'neither' = 'neither'
+            if (currentPinPos?.id === pin._id) {
+                origin = "left"
+                console.log("current pin is origin pin")
+            }
+            if (currentPinPos?.id === connectedPin._id) {
+                origin = "right"
+                console.log("current pin is connecting Pin")
+            }
+
+            const pathData = `M${origin === 'left' ? currentPinPos?.x : pin.x} ${origin === 'left' ? currentPinPos?.y : pin.y} 
+            C${controlPoint1X} ${controlPoint1Y}, ${controlPoint2X} ${controlPoint2Y}, 
+            ${origin === 'right' ? currentPinPos?.x : connectedPin.x} ${origin === 'right' ? currentPinPos?.y : connectedPin.y}`;
 
             return (
                 <path

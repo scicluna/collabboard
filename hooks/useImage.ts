@@ -29,14 +29,12 @@ export function useImage({ userId, boardId, zoom }: useImageProps) {
 
     const handleImageDrop = async (e: React.DragEvent) => {
         e.preventDefault()
-        console.log("HERE")
         const files = e.dataTransfer.files;
         if (files.length === 0) {
             return;
         }
 
         const { scaledX, scaledY } = scaledMouse(e, zoom)
-
         const file = files[0];
         if (file.type.startsWith("image/")) {
             // Upload the image to your server or an external service
@@ -75,7 +73,6 @@ export function useImage({ userId, boardId, zoom }: useImageProps) {
     }
 
     async function handleImageDragStart(e: React.DragEvent) {
-        console.log("here")
         var img = document.createElement("img");
         img.style.backgroundColor = "red";
         img.style.position = "absolute"; img.style.top = "0px"; img.style.right = "0px";
@@ -89,8 +86,6 @@ export function useImage({ userId, boardId, zoom }: useImageProps) {
 
     async function handleImageDragMove(e: React.DragEvent, image: Doc<"images">) {
         e.preventDefault()
-
-        console.log("HI")
         if (!initialDragPos) return;
 
         //prevent odd release that sets x and y to 0

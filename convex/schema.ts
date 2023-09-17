@@ -33,6 +33,8 @@ export default defineSchema({
         boardId: v.string(),
         x: v.number(),
         y: v.number(),
+        width: v.number(),
+        height: v.number(),
         zIndex: v.number(),
         connectedPins: v.optional(v.array(v.id("pins")))
     }),
