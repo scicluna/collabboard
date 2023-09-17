@@ -2,7 +2,8 @@
 const nextConfig = {
     images: {
         domains: [
-            "strong-warthog-524.convex.cloud"
+            "strong-warthog-524.convex.cloud",
+            "limitless-badger-698.convex.cloud"
         ]
     }
 }
