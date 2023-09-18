@@ -120,8 +120,8 @@ export function usePinTool({ pinToolActive, zoom, userId, boardId, maxZIndex }: 
         const deltaX = e.clientX - initialDragPos.x;
         const deltaY = e.clientY - initialDragPos.y;
 
-        const startX = pin.x + pin.width / 2;
-        const startY = pin.y + pin.height / 2; // Adjusted for center
+        const startX = pin.x + (pin.width * zoom) / 2;
+        const startY = pin.y + (pin.height * zoom) / 2; // Adjusted for center
 
         const newX = startX + deltaX / zoom;
         const newY = startY + deltaY / zoom;
