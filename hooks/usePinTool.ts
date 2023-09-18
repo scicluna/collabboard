@@ -10,9 +10,10 @@ type usePinToolProps = {
     zoom: number
     userId: string
     boardId: string
+    maxZIndex: number
 }
 
-export function usePinTool({ pinToolActive, zoom, userId, boardId }: usePinToolProps) {
+export function usePinTool({ pinToolActive, zoom, userId, boardId, maxZIndex }: usePinToolProps) {
     const [startPos, setStartPos] = useState<{ x: number, y: number } | null>(null);
     const [initialDragPos, setInitialDragPos] = useState<{ x: number, y: number } | null>(null)
     const [currentPinPos, setCurrentPos] = useState<{ id: string, x: number, y: number, height: number, width: number } | null>(null);
@@ -31,7 +32,7 @@ export function usePinTool({ pinToolActive, zoom, userId, boardId }: usePinToolP
         if (!pinToolActive) return;
 
         e.stopPropagation()
-        if (e.target instanceof Element && (e.target.classList.contains('line') || (e.target.classList.contains('note')))) {
+        if (e.target instanceof Element && (e.target.classList.contains('line') || (e.target.classList.contains('note')) || (e.target.classList.contains('image')))) {
             return;
         } else if (e.target instanceof Element && (e.target.classList.contains('pin'))) {
             if (linking) {
@@ -86,7 +87,7 @@ export function usePinTool({ pinToolActive, zoom, userId, boardId }: usePinToolP
                 boardId: boardId,
                 x: startPos.x,
                 y: startPos.y,
-                zIndex: 1
+                zIndex: maxZIndex
             })
             setStartPos(null)
         }
@@ -107,7 +108,6 @@ export function usePinTool({ pinToolActive, zoom, userId, boardId }: usePinToolP
     }
 
     function handlePinDragMove(e: React.DragEvent, pin: Doc<"pins">) {
-        console.log(pin)
         e.preventDefault()
         e.stopPropagation()
         if (!initialDragPos) return;
@@ -139,7 +139,7 @@ export function usePinTool({ pinToolActive, zoom, userId, boardId }: usePinToolP
                 y: currentPinPos.y,
                 width: pin.width,
                 height: pin.height,
-                zIndex: 1,
+                zIndex: maxZIndex,
                 connectedPins: pin.connectedPins
             })
         }
@@ -181,7 +181,7 @@ export function usePinTool({ pinToolActive, zoom, userId, boardId }: usePinToolP
             y: pin.y,
             height: pin.height,
             width: pin.width,
-            zIndex: pin.zIndex,
+            zIndex: maxZIndex,
             connectedPins: pin.connectedPins
         })
     }

@@ -11,9 +11,10 @@ type useLineToolProps = {
     userId: string,
     boardId: string
     zoom: number
+    maxZIndex: number
 }
 
-export function useLineTool({ lineToolActive, userId, boardId, zoom }: useLineToolProps) {
+export function useLineTool({ lineToolActive, userId, boardId, zoom, maxZIndex }: useLineToolProps) {
     const [currentPath, setCurrentPath] = useState("");
     const [points, setPoints] = useState<Array<[number, number]>>([]);
 
@@ -23,8 +24,10 @@ export function useLineTool({ lineToolActive, userId, boardId, zoom }: useLineTo
 
     const handleLineMouseDown = (e: React.MouseEvent) => {
         if (!lineToolActive) return;
-        if (e.target instanceof Element && ((e.target.classList.contains('line') || (e.target.classList.contains('note')) || (e.target.classList.contains('image'))))) {
-            return;  // Do nothing if a line was clicked
+
+        e.stopPropagation()
+        if (e.target instanceof Element && (e.target.classList.contains('pin') || (e.target.classList.contains('note')) || (e.target.classList.contains('image')) || (e.target.classList.contains('line')))) {
+            return;
         }
 
         const { scaledX, scaledY } = scaledMouse(e, zoom)
@@ -36,7 +39,6 @@ export function useLineTool({ lineToolActive, userId, boardId, zoom }: useLineTo
     };
 
     const handleLineMouseMove = (e: React.MouseEvent) => {
-        e.preventDefault()
         if (!currentPath || !points || !lineToolActive) return;
 
         const { scaledX, scaledY } = scaledMouse(e, zoom);
@@ -69,7 +71,7 @@ export function useLineTool({ lineToolActive, userId, boardId, zoom }: useLineTo
                 width: width,
                 height: height,
                 path: currentPath,
-                zIndex: 1,
+                zIndex: maxZIndex + 1,
                 strokeColor: 'black'
             })
         }
@@ -87,7 +89,7 @@ export function useLineTool({ lineToolActive, userId, boardId, zoom }: useLineTo
             width: line.width,
             height: line.height,
             path: newPath,
-            zIndex: line.zIndex,
+            zIndex: maxZIndex + 1,
             strokeColor: line.strokeColor
         })
     }
@@ -102,7 +104,7 @@ export function useLineTool({ lineToolActive, userId, boardId, zoom }: useLineTo
             width: line.width,
             height: line.height,
             path: line.path,
-            zIndex: line.zIndex,
+            zIndex: maxZIndex + 1,
             strokeColor: line.strokeColor
         })
 

@@ -10,9 +10,10 @@ type useNotesProps = {
     userId: string
     boardId: string
     zoom: number
+    maxZIndex: number
 }
 
-function useNoteTool({ noteToolActive, userId, boardId, zoom }: useNotesProps) {
+function useNoteTool({ noteToolActive, userId, boardId, zoom, maxZIndex }: useNotesProps) {
     const [startPos, setStartPos] = useState<{ x: number, y: number } | null>(null);
     const [currentBox, setCurrentBox] = useState<{ x: number, y: number, width: number, height: number } | null>(null);
     const [drawingNote, setDrawingNote] = useState(false)
@@ -71,7 +72,7 @@ function useNoteTool({ noteToolActive, userId, boardId, zoom }: useNotesProps) {
             width: currentBox.width,
             height: currentBox.height,
             fontSize: 20,
-            zIndex: 1,
+            zIndex: maxZIndex || 1,
             text: "New Note"
         })
 

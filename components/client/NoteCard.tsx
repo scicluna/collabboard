@@ -20,10 +20,9 @@ type NoteCardProps = {
         width: number;
         height: number;
     } | null;
-    zoom: number
 }
 
-export default function NoteCard({ note, handleNoteDragStart, handleNoteDrag, handleNoteDragEnd, updateNoteText, noteKeyDown, currentPosition, handleNoteResize, zoom }: NoteCardProps) {
+export default function NoteCard({ note, handleNoteDragStart, handleNoteDrag, handleNoteDragEnd, updateNoteText, noteKeyDown, currentPosition, handleNoteResize }: NoteCardProps) {
     const [textContent, setTextContent] = useState(note.text)
     const [focused, setFocused] = useState(false)
     const textAreaRef = useRef<HTMLTextAreaElement>(null);
@@ -55,7 +54,7 @@ export default function NoteCard({ note, handleNoteDragStart, handleNoteDrag, ha
         >
             <div key={note._id}
                 style={{ zIndex: `${note.zIndex}px` }}
-                className={`h-full w-full note absolute rounded-lg z-10
+                className={`h-full w-full note absolute rounded-lg
                  ${currentPosition ? "" : 'transition-all duration-150'}`}
                 draggable="true"
                 onDragStart={e => handleNoteDragStart(e)}
@@ -67,7 +66,7 @@ export default function NoteCard({ note, handleNoteDragStart, handleNoteDrag, ha
                     onChange={handleTextChange}
                     onKeyDown={(e) => noteKeyDown(e, note)}
                     className={`note h-full w-full  p-2 resize-none outline  rounded-lg overflow-hidden ${focused && 'outline-indigo-400 outline-4'} `}
-                    style={{ fontSize: note.fontSize || '20px' }} id={`note-${note._id}`}
+                    id={`note-${note._id}`}
                 />
             </div>
         </ResizeWrapper>

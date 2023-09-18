@@ -29,17 +29,34 @@ export default function Board({ userId, boardId }: BoardProps) {
     const [noteToolActive, setNoteToolActive] = useState(false)
     const [lineToolActive, setLineToolActive] = useState(false)
     const [pinToolActive, setPinToolActive] = useState(false)
-    const { zoom, handleZoom, dragMouseDown, dragMouseMove, dragMouseUp, cursorLogic, arrowDragKeyDown } = useDragAndZoom({ initialZoom: 1, dragToolActive })
-    const { handleNoteMouseDown, handleNoteMouseMove, handleNoteMouseUp, currentBox } = useNoteTool({ noteToolActive, userId, boardId, zoom })
-    const { handleLineMouseDown, handleLineMouseMove, handleLineMouseUp, handleLineResize, lineKeyDown, handleLineDrag, currentPath } = useLineTool({ lineToolActive, userId, boardId, zoom })
-    const { handlePinMouseDown, handlePinMouseMove, handlePinMouseUp, handlePinDragStart, handlePinDragMove, handlePinDragEnd, pinKeyDown, handlePinResize, currentPinPos } = usePinTool({ boardId, userId, pinToolActive, zoom })
-    const { noteKeyDown, updateNoteText, handleNoteDragStart, handleNoteDrag, handleNoteDragEnd, currentPosition, handleNoteResize } = useNoteUpdating({ zoom })
-    const { imageDragHandler, handleImageResize, handleImageDragMove, handleImageDragEnd, imageKeyDown, currentImagePos } = useImage({ userId, boardId, zoom })
+    const [maxZIndex, setMaxZIndex] = useState<number>(0)
     const canvasRef = useRef(null);
 
     const notes = useQuery(api.notes.getNotes, { boardId: boardId })
     const pins = useQuery(api.pins.getPins, { boardId: boardId })
     const images = useQuery(api.images.getImages, { boardId: boardId })
+
+    const { zoom, handleZoom, dragMouseDown, dragMouseMove, dragMouseUp, cursorLogic, arrowDragKeyDown }
+        = useDragAndZoom({ initialZoom: 1, dragToolActive })
+    const { handleNoteMouseDown, handleNoteMouseMove, handleNoteMouseUp, currentBox }
+        = useNoteTool({ noteToolActive, userId, boardId, zoom, maxZIndex })
+    const { handleLineMouseDown, handleLineMouseMove, handleLineMouseUp, handleLineResize, lineKeyDown, handleLineDrag, currentPath }
+        = useLineTool({ lineToolActive, userId, boardId, zoom, maxZIndex })
+    const { handlePinMouseDown, handlePinMouseMove, handlePinMouseUp, handlePinDragStart, handlePinDragMove, handlePinDragEnd, pinKeyDown, handlePinResize, currentPinPos }
+        = usePinTool({ boardId, userId, pinToolActive, zoom, maxZIndex })
+    const { noteKeyDown, updateNoteText, handleNoteDragStart, handleNoteDrag, handleNoteDragEnd, currentPosition, handleNoteResize }
+        = useNoteUpdating({ zoom, maxZIndex })
+    const { imageDragHandler, handleImageResize, handleImageDragMove, handleImageDragEnd, imageKeyDown, currentImagePos }
+        = useImage({ userId, boardId, zoom, maxZIndex })
+
+    useEffect(() => {
+        if (notes && pins && images) {
+            const noteZ = Math.max(...(notes?.map(note => note.zIndex) || [0]));
+            const pinsZ = Math.max(...(pins?.map(pin => pin.zIndex) || [0]));
+            const imageZ = Math.max(...(images?.map(image => image.zIndex) || [0]));
+            setMaxZIndex(Math.max(noteZ, pinsZ, imageZ, 0) + 1);
+        }
+    }, [notes, pins, images])
 
     //center camera on load
     useEffect(() => {
@@ -128,7 +145,6 @@ export default function Board({ userId, boardId }: BoardProps) {
                         handleNoteDragEnd={handleNoteDragEnd}
                         currentPosition={currentPosition}
                         handleNoteResize={handleNoteResize}
-                        zoom={zoom}
                     />
                 ))}
                 {images && images.map(image => (
@@ -161,9 +177,10 @@ export default function Board({ userId, boardId }: BoardProps) {
                     handleLineDrag={handleLineDrag}
                     pins={pins}
                     currentPinPos={currentPinPos}
+                    maxZIndex={maxZIndex}
                 />
-                <NotePreview currentBox={currentBox} currentPosition={currentPosition} />
-                <PinPreview currentPinPos={currentPinPos} />
+                <NotePreview currentBox={currentBox} currentPosition={currentPosition} maxZIndex={maxZIndex} />
+                <PinPreview currentPinPos={currentPinPos} maxZIndex={maxZIndex} />
 
             </section>
             <Rail zoom={zoom} />

@@ -1,6 +1,5 @@
-import ResizeWrapper from "@/components/client/ResizeWrapper"
 import { Doc } from "@/convex/_generated/dataModel"
-import { Dispatch, SetStateAction, useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 
 
 type LinePathProps = {
@@ -88,7 +87,7 @@ export default function LinePath({ line, handleLineResize, moving, lineKeyDown, 
             fill="none"
             strokeWidth="10"
             strokeLinecap="round"
-            style={{ zIndex: `${line.zIndex}px` }}
+            style={{ zIndex: `${line.zIndex}` }}
             className="pointer-events-auto line"
             onClick={() => setFocused(true)}
             onBlur={() => setFocused(false)}

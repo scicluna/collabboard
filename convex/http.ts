@@ -21,6 +21,7 @@ http.route({
         const width = parseInt(new URL(request.url).searchParams.get("width") || "0");
         const height = parseInt(new URL(request.url).searchParams.get("height") || "0");
         const zIndex = parseInt(new URL(request.url).searchParams.get("zIndex") || "0");
+
         if (userId && boardId && x && y && zIndex) {
             await ctx.runMutation(api.images.uploadImage, { userId, boardId, x, y, width, height, zIndex, storageId });
         }

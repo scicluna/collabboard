@@ -10,9 +10,10 @@ type useImageProps = {
     userId: string
     boardId: string
     zoom: number
+    maxZIndex: number
 }
 
-export function useImage({ userId, boardId, zoom }: useImageProps) {
+export function useImage({ userId, boardId, zoom, maxZIndex }: useImageProps) {
     const [initialDragPos, setInitialDragPos] = useState<{ x: number, y: number } | null>(null);
     const [currentImagePos, setCurrentImagePos] = useState<{ id: string, x: number, y: number } | null>(null);
 
@@ -45,7 +46,7 @@ export function useImage({ userId, boardId, zoom }: useImageProps) {
             sendImageUrl.searchParams.set("y", `${scaledY}`);
             sendImageUrl.searchParams.set("width", `${100}`);
             sendImageUrl.searchParams.set("height", `${100}`);
-            sendImageUrl.searchParams.set("zIndex", "1");
+            sendImageUrl.searchParams.set("zIndex", `${maxZIndex}`);
             if (sendImageUrl) {
                 await fetch(sendImageUrl, {
                     method: "POST",
@@ -67,7 +68,7 @@ export function useImage({ userId, boardId, zoom }: useImageProps) {
             y: image.y,
             width: image.width,
             height: image.height,
-            zIndex: image.zIndex,
+            zIndex: maxZIndex,
             storageId: image.storageId
         })
     }
@@ -110,7 +111,7 @@ export function useImage({ userId, boardId, zoom }: useImageProps) {
                 y: currentImagePos.y,
                 height: image.height,
                 width: image.width,
-                zIndex: image.zIndex,
+                zIndex: maxZIndex,
                 storageId: image.storageId
             })
         }

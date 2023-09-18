@@ -22,19 +22,20 @@ type SvgLayerProps = {
     handleLineDrag: (line: Doc<"lines">, newPath: string) => Promise<void>
     pins: Doc<"pins">[] | undefined
     currentPinPos: { id: string, x: number, y: number } | null
+    maxZIndex: number
 }
 
-export default function SvgLayer({ boardId, currentPosition, currentPath, handleLineResize, lineKeyDown, handleLineDrag, pins, currentPinPos }: SvgLayerProps) {
+export default function SvgLayer({ boardId, currentPosition, currentPath, handleLineResize, lineKeyDown, handleLineDrag, pins, currentPinPos, maxZIndex }: SvgLayerProps) {
     const lines = useQuery(api.lines.getLines, { boardId })
     const { getConnections, generateConnectionPath } = useConnections()
 
-    console.log(pins)
     return (
-        <svg className="h-full w-full pointer-events-none absolute z-20"
+        <svg className="h-full w-full pointer-events-none absolute"
             viewBox="0 0 2500 1500"
             preserveAspectRatio="xMidYMid meet"
             width="100%"
             height="100%"
+            style={{ zIndex: maxZIndex }}
         >
             <g>
                 {pins && getConnections(pins).map(connection => generateConnectionPath(connection.pinOne, connection.pinTwo, currentPinPos))}
