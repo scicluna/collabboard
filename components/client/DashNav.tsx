@@ -7,15 +7,15 @@ import '@fortawesome/fontawesome-svg-core/styles.css';
 import { config } from '@fortawesome/fontawesome-svg-core';
 config.autoAddCss = false; /* eslint-disable import/first */
 
-export default function UserDash() {
+export default function DashNav() {
     return (
         <nav className="h-[5dvh] w-full bg-slate-900 bg-opacity-60 flex items-center justify-between sm:p-10 p-5 shadow-md shadow-slate-950">
-            <div className="w-1/3 flex justify-start h-[30px] items-center">
+            {/* <div className="w-1/3 flex justify-start h-[30px] items-center">
                 <button className="hover:text-gray-400 focus:outline-[3px] focus:outline focus:outline-indigo-300 rounded-full h-full transition-all duration-15 outline-none items-center flex" >
                     <FontAwesomeIcon icon={faGear} color="gray" className="text-3xl" />
                 </button>
-            </div>
-            <div className="w-1/3 flex justify-center h-full items-center">
+            </div> */}
+            <div className="w-1/3 flex justify-start h-full items-center">
                 <Image src={logo} alt="logo" width={36} height={36} />
             </div>
             <div className="w-1/3 flex justify-end relative h-full items-center">

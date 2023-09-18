@@ -16,6 +16,7 @@ import PinPreview from "@/components/client/PinPreview";
 import ImageCard from "@/components/client/ImageCard";
 import { useImage } from "@/hooks/useImage";
 import Rail from "@/components/server/Rail";
+import BoardDash from "@/components/client/BoardDash";
 
 type BoardProps = {
     userId: string
@@ -24,10 +25,10 @@ type BoardProps = {
 
 export default function Board({ userId, boardId }: BoardProps) {
     const [active, setActive] = useState(false)
-    const [dragToolActive, setDragToolActive] = useState(false)
+    const [dragToolActive, setDragToolActive] = useState(true)
     const [noteToolActive, setNoteToolActive] = useState(false)
     const [lineToolActive, setLineToolActive] = useState(false)
-    const [pinToolActive, setPinToolActive] = useState(true)
+    const [pinToolActive, setPinToolActive] = useState(false)
     const { zoom, handleZoom, dragMouseDown, dragMouseMove, dragMouseUp, cursorLogic, arrowDragKeyDown } = useDragAndZoom({ initialZoom: 1, dragToolActive })
     const { handleNoteMouseDown, handleNoteMouseMove, handleNoteMouseUp, currentBox } = useNoteTool({ noteToolActive, userId, boardId, zoom })
     const { handleLineMouseDown, handleLineMouseMove, handleLineMouseUp, handleLineResize, lineKeyDown, handleLineDrag, currentPath } = useLineTool({ lineToolActive, userId, boardId, zoom })
@@ -103,6 +104,7 @@ export default function Board({ userId, boardId }: BoardProps) {
                 pinToolActive={pinToolActive}
                 setPinToolActive={setPinToolActive}
             />
+            <BoardDash />
             {/* <Toolbar createNewNote={createNewNote}  createNewPin={createNewPin} createNewLine={createNewLine}/> */}
             <section ref={canvasRef} tabIndex={0} className={`w-[2500px] h-[1500px] bg-gray-100 overflow-hidden outline-none relative z-20`}
                 onMouseDown={Tool.mouseDown}
