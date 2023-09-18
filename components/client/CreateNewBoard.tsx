@@ -23,11 +23,12 @@ export default function CreateNewBoard({ userid }: BoardSelectorProps) {
             <button className="flex items-center hover:text-gray-400 h-[28px]  rounded-full focus:outline focus:outline-[3px] focus:outline-indigo-300 transition-all duration-15 outline-none" onClick={() => setModal(prev => !prev)}>
                 <FontAwesomeIcon icon={faPlus} color="gray" className="text-3xl rounded-full" />
             </button>
+            <span>Create a Board!</span>
             {modal &&
-                <form className="h-fit flex gap-3 text-sm sm:text-base items-center bg-gray-100 shadow-sm shadow-slate-500 p-1"
+                <form className="absolute right-0 h-fit w-full flex gap-3 text-sm sm:text-base justify-around items-center bg-gray-100 shadow-sm shadow-slate-500 p-3 rounded-md"
                     onSubmit={buildNewBoard}>
                     <label htmlFor="boardname" className="">Board Name:</label>
-                    <input value={name} onChange={e => setName(e.target.value)} type="text" name="boardname" />
+                    <input value={name} onChange={e => setName(e.target.value)} type="text" name="boardname" className="p-1" />
                     <button type="submit" className="text-blue-400 hover:text-blue-300">Create</button>
                     <button type="button" className="text-blue-400 hover:text-blue-300" onClick={() => setModal(prev => !prev)}>
                         <FontAwesomeIcon icon={faX} />

@@ -37,7 +37,7 @@ export default function Board({ userId, boardId }: BoardProps) {
     const images = useQuery(api.images.getImages, { boardId: boardId })
 
     const { zoom, handleZoom, dragMouseDown, dragMouseMove, dragMouseUp, cursorLogic, arrowDragKeyDown }
-        = useDragAndZoom({ initialZoom: 1, dragToolActive })
+        = useDragAndZoom({ initialZoom: .5, dragToolActive })
     const { handleNoteMouseDown, handleNoteMouseMove, handleNoteMouseUp, currentBox }
         = useNoteTool({ noteToolActive, userId, boardId, zoom, maxZIndex })
     const { handleLineMouseDown, handleLineMouseMove, handleLineMouseUp, handleLineResize, lineKeyDown, handleLineDrag, currentPath }

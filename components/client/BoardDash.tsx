@@ -5,9 +5,9 @@ import Link from "next/link"
 
 export default function BoardDash() {
     return (
-        <nav className="fixed top-0 left-0 w-full px-5  flex gap-6 justify-between items-cente h-16 text-black">
-            <Link href={'/dashboard'} className="w-[36px] flex justify-start h-full items-center">
-                <Image src={logo} alt="logo" width={36} height={36} />
+        <nav className="top-0 left-0 w-full px-5 flex gap-6 justify-between items-center h-16 text-black fixed z-[10000]">
+            <Link href={'/dashboard'} className="relative w-[36px] flex justify-start h-full items-center">
+                <Image src={logo} alt="logo" fill />
             </Link>
             <div className="w-[36px] flex justify-end relative h-full items-center">
                 <UserButton />
