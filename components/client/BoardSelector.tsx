@@ -11,7 +11,7 @@ export type BoardSelectorProps = {
 export default function BoardSelector({ userid }: BoardSelectorProps) {
     const boards = useQuery(api.boards.getBoards, { userId: userid! })
     return (
-        <section className="h-[90dvh] sm:w-1/4 w-full p-4 relative shadow-sm shadow-gray-300 overflow-auto">
+        <section className="sm:h-[90dvh] sm:w-1/4 w-full p-4 relative shadow-sm shadow-gray-300 overflow-auto">
             <CreateNewBoard userid={userid} />
             <div className="flex flex-col gap-4">
                 {boards && boards.length > 0 ? boards.map(board => (
