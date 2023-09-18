@@ -1,26 +1,25 @@
+//welcome to the hack zone
 export const adjustFontSize = (textareaElement: HTMLTextAreaElement, content: string) => {
-    // Create a hidden div with the same width as the textarea
     const tempDiv = document.createElement("div");
     tempDiv.style.width = `${textareaElement.offsetWidth}px`;
     tempDiv.style.visibility = 'hidden';
     tempDiv.style.position = 'absolute';
-    tempDiv.style.whiteSpace = 'pre-wrap';
+    tempDiv.style.whiteSpace = 'normal';  // Allow natural wrapping of content
+    tempDiv.style.wordWrap = 'break-word'; // Allow long words to wrap
     document.body.appendChild(tempDiv);
 
     let currentFontSize = parseInt(window.getComputedStyle(textareaElement).fontSize, 10);
     tempDiv.style.fontSize = `${currentFontSize}px`;
 
-
-    const MAX_ITERATIONS = 100; // Prevent infinite loops
+    const MAX_ITERATIONS = 100;
     let iterations = 0;
-    // Iterate to adjust font size
     while (iterations < MAX_ITERATIONS) {
         tempDiv.textContent = content;
         const contentHeight = tempDiv.offsetHeight;
 
-        if (contentHeight < textareaElement.offsetHeight - 2) { // If the content is too small for the container
+        if (contentHeight < textareaElement.offsetHeight - 2) {
             currentFontSize++;
-        } else if (contentHeight > textareaElement.offsetHeight + 2) { // If the content overflows the container
+        } else if (contentHeight > textareaElement.offsetHeight + 2) {
             currentFontSize--;
         } else {
             break;
@@ -30,10 +29,7 @@ export const adjustFontSize = (textareaElement: HTMLTextAreaElement, content: st
         iterations++;
     }
 
-    // Remove the div from the document
     document.body.removeChild(tempDiv);
-
-    // Apply the adjusted font size to the textarea
     textareaElement.style.fontSize = `${currentFontSize}px`;
     return currentFontSize;
 };
