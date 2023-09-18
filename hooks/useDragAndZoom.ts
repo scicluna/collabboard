@@ -52,7 +52,7 @@ function useDragAndZoom({ initialZoom = 1, dragToolActive = true }: UseDragAndZo
         setDragging(false);
     }
 
-    const cursorLogic = dragging ? 'grabbing' : dragToolActive ? 'grab' : 'default';
+    const dragCursorLogic = dragging ? 'grabbing' : dragToolActive ? 'grab' : 'default';
 
     //////////////////////////////////ARROW KEY LOGIC
     const ARROW_KEY_DRAG_SPEED = 20
@@ -98,7 +98,7 @@ function useDragAndZoom({ initialZoom = 1, dragToolActive = true }: UseDragAndZo
         dragMouseDown,
         dragMouseMove,
         dragMouseUp,
-        cursorLogic,
+        dragCursorLogic,
         arrowDragKeyDown
     };
 }

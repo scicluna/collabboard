@@ -7,9 +7,10 @@ import { api } from "@/convex/_generated/api"
 type useNoteUpdatingProps = {
     zoom: number,
     maxZIndex: number
+    noteToolActive: boolean
 }
 
-function useNoteUpdating({ zoom, maxZIndex }: useNoteUpdatingProps) {
+function useNoteUpdating({ zoom, maxZIndex, noteToolActive }: useNoteUpdatingProps) {
     const updateNote = useMutation(api.notes.updateNote)
     const deleteNote = useMutation(api.notes.deleteNote)
     const [initialDragPos, setInitialDragPos] = useState<{ x: number, y: number } | null>(null);
@@ -110,6 +111,8 @@ function useNoteUpdating({ zoom, maxZIndex }: useNoteUpdatingProps) {
         })
     }
 
+    const noteCursorLogic = noteToolActive ? 'crosshair' : 'default';
+
     return {
         noteKeyDown,
         updateNoteText,
@@ -117,7 +120,8 @@ function useNoteUpdating({ zoom, maxZIndex }: useNoteUpdatingProps) {
         handleNoteDrag,
         currentPosition,
         handleNoteDragEnd,
-        handleNoteResize
+        handleNoteResize,
+        noteCursorLogic
     }
 }
 

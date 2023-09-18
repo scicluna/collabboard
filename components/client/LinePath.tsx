@@ -83,7 +83,7 @@ export default function LinePath({ line, handleLineResize, moving, lineKeyDown, 
     return (
         <path
             d={currentD}
-            stroke={focused ? "purple" : line.strokeColor}
+            stroke={focused ? "red" : line.strokeColor}
             fill="none"
             strokeWidth="10"
             strokeLinecap="round"

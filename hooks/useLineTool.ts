@@ -130,6 +130,7 @@ export function useLineTool({ lineToolActive, userId, boardId, zoom, maxZIndex }
         }
     }
 
+    const lineCursorLogic = lineToolActive ? 'crosshair' : 'default';
 
     return {
         handleLineMouseDown,
@@ -138,6 +139,7 @@ export function useLineTool({ lineToolActive, userId, boardId, zoom, maxZIndex }
         handleLineResize,
         lineKeyDown,
         handleLineDrag,
-        currentPath
+        currentPath,
+        lineCursorLogic
     }
 }

@@ -67,6 +67,7 @@ export default function NoteCard({ note, handleNoteDragStart, handleNoteDrag, ha
                     onKeyDown={(e) => noteKeyDown(e, note)}
                     className={`note h-full w-full  p-2 resize-none outline  rounded-lg overflow-hidden ${focused && 'outline-indigo-400 outline-4'} `}
                     id={`note-${note._id}`}
+                    style={{ fontSize: note.fontSize }}
                 />
             </div>
         </ResizeWrapper>

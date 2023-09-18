@@ -77,7 +77,7 @@ export function useConnections() {
                     key={`${pin._id}-${connectedPin._id}`}
                     d={pathData}
                     stroke="black"
-                    strokeWidth="2"
+                    strokeWidth="5"
                     fill="none"
                 />
             );

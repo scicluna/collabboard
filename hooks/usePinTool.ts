@@ -52,8 +52,10 @@ export function usePinTool({ pinToolActive, zoom, userId, boardId, maxZIndex }: 
             const relativeX = e.clientX - canvasRect.left;
             const relativeY = e.clientY - canvasRect.top;
 
-            const scaledX = relativeX / zoom;
-            const scaledY = relativeY / zoom;
+            const scaledX = (relativeX - (50 * zoom)) / zoom;
+            const scaledY = (relativeY - (50 * zoom)) / zoom;
+
+
 
             setStartPos({ x: scaledX, y: scaledY });
         }
@@ -185,6 +187,8 @@ export function usePinTool({ pinToolActive, zoom, userId, boardId, maxZIndex }: 
         })
     }
 
+    const pinCursorLogic = pinToolActive ? 'crosshair' : 'default';
+
     return {
         handlePinMouseDown,
         handlePinMouseMove,
@@ -194,7 +198,8 @@ export function usePinTool({ pinToolActive, zoom, userId, boardId, maxZIndex }: 
         handlePinDragEnd,
         pinKeyDown,
         handlePinResize,
-        currentPinPos
+        currentPinPos,
+        pinCursorLogic
     }
 
 }

@@ -36,16 +36,16 @@ export default function Board({ userId, boardId }: BoardProps) {
     const pins = useQuery(api.pins.getPins, { boardId: boardId })
     const images = useQuery(api.images.getImages, { boardId: boardId })
 
-    const { zoom, handleZoom, dragMouseDown, dragMouseMove, dragMouseUp, cursorLogic, arrowDragKeyDown }
+    const { zoom, handleZoom, dragMouseDown, dragMouseMove, dragMouseUp, dragCursorLogic, arrowDragKeyDown }
         = useDragAndZoom({ initialZoom: .5, dragToolActive })
     const { handleNoteMouseDown, handleNoteMouseMove, handleNoteMouseUp, currentBox }
         = useNoteTool({ noteToolActive, userId, boardId, zoom, maxZIndex })
-    const { handleLineMouseDown, handleLineMouseMove, handleLineMouseUp, handleLineResize, lineKeyDown, handleLineDrag, currentPath }
+    const { handleLineMouseDown, handleLineMouseMove, handleLineMouseUp, handleLineResize, lineKeyDown, handleLineDrag, currentPath, lineCursorLogic }
         = useLineTool({ lineToolActive, userId, boardId, zoom, maxZIndex })
-    const { handlePinMouseDown, handlePinMouseMove, handlePinMouseUp, handlePinDragStart, handlePinDragMove, handlePinDragEnd, pinKeyDown, handlePinResize, currentPinPos }
+    const { handlePinMouseDown, handlePinMouseMove, handlePinMouseUp, handlePinDragStart, handlePinDragMove, handlePinDragEnd, pinKeyDown, handlePinResize, currentPinPos, pinCursorLogic }
         = usePinTool({ boardId, userId, pinToolActive, zoom, maxZIndex })
-    const { noteKeyDown, updateNoteText, handleNoteDragStart, handleNoteDrag, handleNoteDragEnd, currentPosition, handleNoteResize }
-        = useNoteUpdating({ zoom, maxZIndex })
+    const { noteKeyDown, updateNoteText, handleNoteDragStart, handleNoteDrag, handleNoteDragEnd, currentPosition, handleNoteResize, noteCursorLogic }
+        = useNoteUpdating({ zoom, maxZIndex, noteToolActive })
     const { imageDragHandler, handleImageResize, handleImageDragMove, handleImageDragEnd, imageKeyDown, currentImagePos }
         = useImage({ userId, boardId, zoom, maxZIndex })
 
@@ -74,34 +74,39 @@ export default function Board({ userId, boardId }: BoardProps) {
                 mouseDown: dragMouseDown,
                 mouseMove: dragMouseMove,
                 mouseUp: dragMouseUp,
+                cursorLogic: dragCursorLogic
             }
         }
         if (noteToolActive) {
             return {
                 mouseDown: handleNoteMouseDown,
                 mouseMove: handleNoteMouseMove,
-                mouseUp: handleNoteMouseUp
+                mouseUp: handleNoteMouseUp,
+                cursorLogic: noteCursorLogic
             }
         }
         if (lineToolActive) {
             return {
                 mouseDown: handleLineMouseDown,
                 mouseMove: handleLineMouseMove,
-                mouseUp: handleLineMouseUp
+                mouseUp: handleLineMouseUp,
+                cursorLogic: lineCursorLogic
             }
         }
         if (pinToolActive) {
             return {
                 mouseDown: handlePinMouseDown,
                 mouseMove: handlePinMouseMove,
-                mouseUp: handlePinMouseUp
+                mouseUp: handlePinMouseUp,
+                cursorLogic: pinCursorLogic
             }
         }
 
         return {
             mouseDown: () => { },
             mouseMove: () => { },
-            mouseUp: () => { }
+            mouseUp: () => { },
+            cursorLogic: ''
         }
     }
     const Tool = activeTool()
@@ -129,7 +134,7 @@ export default function Board({ userId, boardId }: BoardProps) {
                 onMouseUp={Tool.mouseUp}
                 onMouseLeave={Tool.mouseUp}
                 onWheel={handleZoom}
-                onKeyDown={arrowDragKeyDown} style={{ transform: `scale(${zoom})`, cursor: cursorLogic }}
+                onKeyDown={arrowDragKeyDown} style={{ transform: `scale(${zoom})`, cursor: Tool.cursorLogic }}
                 onDragOver={e => e.preventDefault()}
                 onDrop={imageDragHandler}>
 
