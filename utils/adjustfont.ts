@@ -17,6 +17,11 @@ export const adjustFontSize = (textareaElement: HTMLTextAreaElement, content: st
         tempDiv.textContent = content;
         const contentHeight = tempDiv.offsetHeight;
 
+        //dont scale out of control at 0 content
+        if (contentHeight === 0) {
+            break;
+        }
+
         if (contentHeight < textareaElement.offsetHeight - 2) {
             currentFontSize++;
         } else if (contentHeight > textareaElement.offsetHeight + 2) {
@@ -30,6 +35,5 @@ export const adjustFontSize = (textareaElement: HTMLTextAreaElement, content: st
     }
 
     document.body.removeChild(tempDiv);
-    textareaElement.style.fontSize = `${currentFontSize}px`;
     return currentFontSize;
 };

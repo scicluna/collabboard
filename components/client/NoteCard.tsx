@@ -23,18 +23,28 @@ type NoteCardProps = {
 }
 
 export default function NoteCard({ note, handleNoteDragStart, handleNoteDrag, handleNoteDragEnd, updateNoteText, noteKeyDown, currentPosition, handleNoteResize }: NoteCardProps) {
-    const [textContent, setTextContent] = useState(note.text)
+    const [textContent, setTextContent] = useState<string | null>(note.text)
+    const [fontSize, setFontSize] = useState<number>(note.fontSize)
     const [focused, setFocused] = useState(false)
     const textAreaRef = useRef<HTMLTextAreaElement>(null);
+    const DEBOUNCETIME = 500
 
     useEffect(() => {
-        if (textAreaRef.current) {
-            const newSize = adjustFontSize(textAreaRef.current, textContent);
-            debouncedUpdateNoteText(newSize, textContent, note)
+        if (textContent !== note.text) {
+            setTextContent(note.text);
+            setFontSize(note.fontSize)
         }
-    }, [note, textContent])
+    }, [note]);
 
-    const debouncedUpdateNoteText = useDebounce(updateNoteText, 500)
+    useEffect(() => {
+        if (textAreaRef.current && textContent !== note.text && textContent) {
+            const newFontSize = adjustFontSize(textAreaRef.current, textContent);
+            setFontSize(newFontSize);
+            debouncedUpdateNoteText(fontSize, textContent, note)
+        }
+    }, [textContent])
+
+    const debouncedUpdateNoteText = useDebounce(updateNoteText, DEBOUNCETIME)
 
     const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         setTextContent(e.target.value);
@@ -58,12 +68,12 @@ export default function NoteCard({ note, handleNoteDragStart, handleNoteDrag, ha
                 onDragEnd={e => handleNoteDragEnd(e, note)}>
                 <textarea
                     ref={textAreaRef}
-                    value={textContent}
+                    value={textContent || ""}
                     onChange={handleTextChange}
                     onKeyDown={(e) => noteKeyDown(e, note)}
                     className={`note h-full w-full  p-2 resize-none outline  rounded-lg overflow-hidden ${focused && 'outline-indigo-400 outline-4'} `}
                     id={`note-${note._id}`}
-                    style={{ fontSize: note.fontSize }}
+                    style={{ fontSize: fontSize }}
                 />
             </div>
         </ResizeWrapper>

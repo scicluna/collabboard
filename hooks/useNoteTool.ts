@@ -71,7 +71,7 @@ function useNoteTool({ noteToolActive, userId, boardId, zoom, maxZIndex }: useNo
             y: currentBox.y,
             width: currentBox.width,
             height: currentBox.height,
-            fontSize: 20,
+            fontSize: 100,
             zIndex: maxZIndex || 1,
             text: "New Note"
         })

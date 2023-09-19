@@ -20,7 +20,7 @@ export default function LinePath({ line, handleLineResize, moving, lineKeyDown, 
     const [focused, setFocused] = useState(false);
     const [dragging, setDragging] = useState(false);
     const [startPos, setStartPos] = useState<{ x: number, y: number } | null>(null);
-    const [currentD, setCurrentD] = useState(line.path)
+    const [currentD, setCurrentD] = useState<string | null>(null)
 
     const handleMouseDown = (e: React.MouseEvent) => {
         setStartPos({
@@ -68,6 +68,7 @@ export default function LinePath({ line, handleLineResize, moving, lineKeyDown, 
 
         setStartPos(null);
         setDragging(false);
+        setCurrentD(null)
     };
 
     useEffect(() => {
@@ -82,7 +83,7 @@ export default function LinePath({ line, handleLineResize, moving, lineKeyDown, 
 
     return (
         <path
-            d={currentD}
+            d={currentD ?? line.path}
             stroke={focused ? "red" : line.strokeColor}
             fill="none"
             strokeWidth="10"
