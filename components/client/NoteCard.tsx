@@ -28,10 +28,6 @@ export default function NoteCard({ note, handleNoteDragStart, handleNoteDrag, ha
     const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
     useEffect(() => {
-        setTextContent(note.text)
-    }, [note])
-
-    useEffect(() => {
         if (textAreaRef.current) {
             const newSize = adjustFontSize(textAreaRef.current, textContent);
             debouncedUpdateNoteText(newSize, textContent, note)
