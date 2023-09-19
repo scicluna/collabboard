@@ -1,34 +1,36 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Collab Board: A realtime canvas for doodling with your friends!
+
+## Features
+Real-time updates: Your Collab Board canvas updates in real time using Convex!
+
+Do whatever you want: You can draw, write, pin, and upload images on collab board to your heart's content.
+
+Invite friends: Inviting a friend to your board is as easy as copy pasting the board's url.
+
+## Tech Stack
+Collab Board is built with the following:
+
+Frontend: The user interface of Collab Board is handled with NextJS 13
+
+Backend: The backend is powered by Convex and Clerk to handle websocketted databasing and authentication.
 
 ## Getting Started
+To get Collab Board running locally on your machine, please follow the steps below:
 
-First, run the development server:
+Clone the repository to your local machine.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-```
+Install the dependencies by running npm install in your terminal.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Set up the .env file with the necessary environment variables.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+To start the development server, run npm run dev in your terminal.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+Visit localhost:3000 in your browser to view the application.
 
-## Learn More
+## Contributions
+I welcome all kinds of contributions! Please feel free to contribute by opening issues, suggesting features, updating documentation, or even fixing bugs.
 
-To learn more about Next.js, take a look at the following resources:
+## License
+Collab Board is open-source and is licensed under the MIT License.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+For any further questions, you can reach out to the me directly. Happy coding!
