@@ -1,6 +1,6 @@
 "use client"
 import { useState, useEffect, useRef } from "react"
-import { useQuery } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import useDragAndZoom from "@/hooks/useDragAndZoom"
 import useNoteTool from "@/hooks/useNoteTool"
@@ -17,6 +17,8 @@ import ImageCard from "@/components/client/ImageCard";
 import { useImage } from "@/hooks/useImage";
 import Rail from "@/components/server/Rail";
 import BoardDash from "@/components/client/BoardDash";
+import { Id } from "@/convex/_generated/dataModel";
+import { useRouter } from 'next/navigation';
 
 type BoardProps = {
     userId: string
@@ -24,6 +26,7 @@ type BoardProps = {
 }
 
 export default function Board({ userId, boardId }: BoardProps) {
+    const { push } = useRouter()
     const [active, setActive] = useState(false)
     const [dragToolActive, setDragToolActive] = useState(true)
     const [noteToolActive, setNoteToolActive] = useState(false)
@@ -32,6 +35,7 @@ export default function Board({ userId, boardId }: BoardProps) {
     const [maxZIndex, setMaxZIndex] = useState<number>(0)
     const canvasRef = useRef(null);
 
+    const checkBoard = useMutation(api.boards.checkBoard)
     const notes = useQuery(api.notes.getNotes, { boardId: boardId })
     const pins = useQuery(api.pins.getPins, { boardId: boardId })
     const images = useQuery(api.images.getImages, { boardId: boardId })
@@ -60,6 +64,7 @@ export default function Board({ userId, boardId }: BoardProps) {
 
     //center camera on load
     useEffect(() => {
+        validateBoard(userId, boardId)
         window.scrollTo((3500 - window.innerWidth) / 2, (3250 - window.innerHeight) / 2)
         document.body.style.overflow = 'hidden';
         setActive(true)
@@ -67,6 +72,18 @@ export default function Board({ userId, boardId }: BoardProps) {
             document.body.style.overflow = 'auto';
         }
     }, [])
+
+    async function validateBoard(userId: string, board: string) {
+        let boardId = board as Id<"boards">
+        try {
+            const isBoard = await checkBoard({ userId, boardId })
+            if (!isBoard) {
+                push('/dashboard')
+            }
+        } catch {
+            push('/dashboard')
+        }
+    }
 
     const activeTool = () => {
         if (dragToolActive) {

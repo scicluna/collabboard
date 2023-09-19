@@ -35,4 +35,18 @@ export const deleteBoard = mutation({
         const deleteBoard = await ctx.db.delete(args.boardId)
         return deleteBoard
     },
-}) 
+})
+
+export const checkBoard = mutation({
+    args: {
+        userId: v.string(),
+        boardId: v.id("boards")
+    },
+    handler: async (ctx, args) => {
+        const checkBoard = await ctx.db.query("boards").filter(q => q.eq(q.field("_id"), args.boardId)).collect()
+        if (!checkBoard[0]) {
+            return false
+        }
+        return true
+    }
+})
